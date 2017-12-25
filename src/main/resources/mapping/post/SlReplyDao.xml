@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.gin.wctf.module.post.dao.SlReplyDao">
+
+	<resultMap type="slReply" id="slReplyMapping">
+		<id property="id" column="sl_reply_id"/>
+		<result property="userId" column="user_id"/>
+		<result property="replyId" column="post_reply_id"/>
+		<result property="replyTime" column="sl_reply_time"/>
+		<result property="content" column="content"/>
+	</resultMap>
+	
+	
+	<select id="listSlReplyByReplyId" parameterType="int" resultMap="slReplyMapping">
+		select * from wctf_sl_reply where post_reply_id = #{0}
+	</select>
+	
+	<insert id="saveSlReply" parameterType="slReply">
+		insert into wctf_sl_reply (user_id, post_reply_id, sl_reply_time, content) values (#{userId}, #{replyId}, #{replyTime}, #{content})
+	</insert>
+	
+</mapper>
+				

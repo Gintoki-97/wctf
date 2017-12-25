@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.gin.wctf.module.sys.dao.RoleDao">
+	
+	<resultMap type="role" id="roleMapping">
+		<id property="roleId" column="role_id"/>
+		<result property="name" column="role_name"/>
+	</resultMap>
+	
+	<select id="getRoleById" parameterType="int" resultMap="roleMapping">
+		select * from wctf_role where role_id = #{roleId}
+	</select>
+	
+	<select id="getRoleByUserIdId" parameterType="int" resultMap="roleMapping">
+		select l.* from wctf_role l right outer join (select * from wctf_user_role where user_id = #{userId}) r on l.role_id = r.role_id
+	</select>
+	
+</mapper>
+				

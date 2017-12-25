@@ -1,0 +1,79 @@
+<!DOCTYPE web-app PUBLIC 
+	"-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" 
+	"http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+
+	<display-name>WCTF Web Application</display-name>
+	
+	<!-- A. Context configuration -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath*:/spring-context*.xml</param-value>
+	</context-param>
+	
+	<!-- B. Filter configuration -->
+		<!-- 1. Global filter -->
+	<filter>
+		<filter-name>preprocessFilter</filter-name>
+		<filter-class>cn.gin.wctf.common.web.PreprocessFilter</filter-class>
+	</filter>
+		<!-- 2. Apache Shiro -->
+	<filter>
+		<filter-name>shiroFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		<init-param>
+			<param-name>targetFilterLifecycle</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+		<!-- e. Filter mapping -->
+	<filter-mapping>
+		<filter-name>preprocessFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>shiroFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<!-- C. Listener configuration -->
+		<!-- 1. Spring context loader listener -->
+	<listener>
+		<listener-class>cn.gin.wctf.module.sys.listener.WebContextLoaderListener</listener-class>
+	</listener>
+		<!-- 2. Support the bean scope of request, session, application -->
+	<listener>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>  
+	</listener>
+	
+	<!-- D. Spring mvc controller -->
+	<servlet>
+		<servlet-name>springmvc</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath*:/spring-mvc.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>springmvc</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	
+	<!-- E. Welcome page configuration -->
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+	
+	<!-- F. Error page configuration -->
+	<error-page>
+		<error-code>404</error-code>
+		<location>/WEB-INF/page/error/404.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/WEB-INF/page/error/500.jsp</location>
+	</error-page>
+	
+</web-app>

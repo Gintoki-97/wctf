@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.gin.wctf.module.sys.dao.UserDao">
+
+	<resultMap type="user" id="userMapping">
+		<id property="id" column="user_id"/>
+		<result property="account" column="account"/>
+		<result property="nickname" column="nickname"/>
+		<result property="email" column="email"/>
+		<result property="gender" column="gender"/>
+		<result property="password" column="password"/>
+		<result property="salt" column="salt"/>
+		<result property="loginFlag" column="login_flag"/>
+		<result property="header" column="header"/>
+		<result property="sign" column="sign"/>
+		<result property="punch" column="punch"/>
+		<result property="birthday" column="birthday"/>
+		<result property="address" column="address"/>
+		<result property="location" column="location"/>
+		<result property="auth" column="auth"/>
+		<result property="reg" column="reg"/>
+	</resultMap>
+	
+	<sql id="updateUserSettingItems">
+		<if test="account != null">
+			`account` = #{account},
+		</if>
+		<if test="nickname != null">
+			`nickname` = #{nickname},
+		</if>
+		<if test="email != null">
+			`email` = #{email},
+		</if>
+		<if test="gender != null">
+			`gender` = #{gender},
+		</if>
+		<if test="password != null">
+			`password` = #{password},
+		</if>
+		<if test="salt != null">
+			`salt` = #{salt},
+		</if>
+		<if test="loginFlag != null">
+			`loginFlag` = #{loginFlag},
+		</if>
+		<if test="sign != null">
+			`sign` = #{sign},
+		</if>
+		<if test="punch != null">
+			`punch` = #{punch},
+		</if>
+		<if test="birthday != null">
+			`birthday` = #{birthday},
+		</if>
+		<if test="address != null">
+			`address` = #{address},
+		</if>
+		<if test="location != null">
+			`location` = #{location},
+		</if>
+		<if test="auth != null">
+			`auth` = #{auth},
+		</if>
+		<if test="reg != null">
+			`reg` = #{reg},
+		</if>
+	</sql>
+	
+	<select id="getUserById" parameterType="int" resultMap="userMapping">
+		select * from wctf_user where user_id = #{userId}
+	</select>
+	
+	<select id="getUserByIdOptional" parameterType="int" resultMap="userMapping">
+		select user_id, nickname, gender, header, address, auth, sign from wctf_user where user_id = #{userId}
+	</select>
+	
+	<select id="getUserByAccount" parameterType="string" resultMap="userMapping">
+		select * from wctf_user where account = #{account}
+	</select>
+	
+	<select id="existsByAccount" parameterType="string" resultType="int">
+		select count(user_id) from wctf_user where account = #{account}
+	</select>
+	
+	<select id="listRoleByUserId" parameterType="int" resultMap="cn.gin.wctf.module.sys.dao.RoleDao.roleMapping">
+		select r.role_id, r.`name` from wctf_user_role ur left join wctf_role r on ur.role_id = r.role_id where ur.user_id = #{userId}
+	</select>
+	
+	<select id="getPunchByUserId" parameterType="int" resultType="string">
+		select punch from wctf_user where user_id = #{userId}
+	</select>
+	
+	<insert id="saveUser" parameterType="user">
+		insert into wctf_user (account, nickname, email, gender, password, salt, login_flag, header, sign, birthday, reg) values (#{account}, #{nickname}, #{email}, #{gender}, #{password}, #{salt}, #{loginFlag}, #{header}, #{sign}, #{birthday}, #{reg})
+	</insert>
+	
+	<update id="updateUserSetting" parameterType="user">
+		update wctf_user
+		<set>
+			<include refid="updateUserSettingItems"></include>
+		</set>
+		where user_id = #{id}
+	</update>
+	
+	<update id="updateUserAvatar">
+		update wctf_user set header=#{1} where user_id = #{0}
+	</update>
+	
+	<update id="updatePunchByUserId">
+		update wctf_user set punch=#{0} where user_id = #{1}
+	</update>
+	
+	<update id="updateUserPassword">
+		update wctf_user set password=#{1},salt=#{2} where user_id = #{0}
+	</update>
+	
+</mapper>
+				

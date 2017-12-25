@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc 
+						http://www.springframework.org/schema/mvc/spring-mvc.xsd
+						http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context 
+						http://www.springframework.org/schema/context/spring-context.xsd"
+						default-lazy-init="true">
+
+	<description>Spring MVC Configuration</description>
+
+	<!-- 加载属性配置文件 -->
+	<context:property-placeholder ignore-unresolvable="true" location="classpath:wctf.properties"/>
+	
+	<!-- 使用组件扫描,只扫描@Controller,其余注解由主配置文件负责配置 -->
+	<context:component-scan base-package="cn.gin.wctf" use-default-filters="false">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	
+	<!-- 默认的注解映射的支持，org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping -->
+	<mvc:annotation-driven content-negotiation-manager="contentNegotiationManager" validator="validator" conversion-service="conversionService">
+		<mvc:message-converters register-defaults="true">
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<!-- 将StringHttpMessageConverter的默认编码设为UTF-8 -->
+				<constructor-arg value="UTF-8"></constructor-arg>
+			</bean>
+			<bean class="org.springframework.http.converter.json.GsonHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>application/json;charset=UTF-8</value>
+					</list>
+				</property>
+			</bean>
+			<!-- 使用XML格式输出数据 -->
+			<bean class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+				<constructor-arg>
+					<bean class="org.springframework.oxm.xstream.XStreamMarshaller">
+						<property name="streamDriver">
+							<bean class="com.thoughtworks.xstream.io.xml.StaxDriver"></bean>
+						</property>
+					</bean>
+				</constructor-arg>
+				<property name="supportedMediaTypes" value="application/xml"></property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+	
+	<!-- Conversion Service -->
+	<bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<property name="converters">
+			<list>
+				<!-- Date converter -->
+				<bean class="cn.gin.wctf.module.sys.util.SimpleDateConverter"></bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Hibernate Validator -->
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="providerClass" value="org.hibernate.validator.HibernateValidator"></property>
+		<property name="validationMessageSource" ref="messageSource"></property>
+	</bean>
+	<!-- 错误信息的资源文件 -->
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>classpath:validate</value>
+			</list>
+		</property>
+		<property name="fileEncodings" value="UTF-8"></property>
+		<property name="cacheSeconds" value="-1"></property>
+	</bean>
+	
+	<!-- REST中根据URL后缀自动判定Content-Type及相应的View -->
+	<bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+		<property name="mediaTypes">
+			<map>
+				<entry key="xml" value="application/xml"></entry>
+				<entry key="json" value="application/json"></entry>
+			</map>
+		</property>
+		<property name="ignoreAcceptHeader" value="true"></property>
+		<property name="favorPathExtension" value="true"></property>
+	</bean>
+	
+	<!-- 视图解析器 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="${web.view.prefix}"></property>
+		<property name="suffix" value="${web.view.suffix}"></property>
+	</bean>
+	
+	<!-- 静态资源处理器 -->
+	<mvc:default-servlet-handler/>
+	
+	<!-- 静态资源映射 
+			cache-period：静态资源缓存1年
+	<mvc:resources location="/static/" mapping="/static/**" cache-period="31536000"></mvc:resources>
+	-->
+	
+	<!-- 定义无 controller 的 path <==> view 映射 -->
+	<mvc:view-controller path="/" view-name="redirect:${web.view.index}"/>
+	
+	<!-- Interceptors -->
+	
+	<!-- 支持Shiro对Controller的方法级AOP安全控制 begin-->
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor">
+		<property name="proxyTargetClass" value="true" />
+	</bean>
+	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="org.apache.shiro.authz.UnauthorizedException">error/403</prop>
+				<prop key="java.lang.Throwable">error/500</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- 上传文件拦截，设置最大上传文件大小上限为  10MB -->  
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">  
+		<property name="maxUploadSize" value="${web.maxUploadSize}" />  
+	</bean>
+	
+</beans>

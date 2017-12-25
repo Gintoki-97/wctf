@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       					   http://www.springframework.org/schema/beans/spring-beans.xsd
+       					   http://www.springframework.org/schema/aop 
+       					   http://www.springframework.org/schema/aop/spring-aop.xsd
+       					   http://www.springframework.org/schema/tx 
+       					   http://www.springframework.org/schema/tx/spring-tx.xsd
+       					   http://www.springframework.org/schema/context 
+       					   http://www.springframework.org/schema/context/spring-context.xsd
+       					   http://www.springframework.org/schema/util 
+       					   http://www.springframework.org/schema/util/spring-util-4.1.xsd
+       					   http://www.springframework.org/schema/task 
+       					   http://www.springframework.org/schema/task/spring-task-4.1.xsd"
+       					   default-lazy-init="true">
+
+	<description>Spring Context Configuration</description>
+
+	<!-- 加载属性配置文件 -->
+	<context:property-placeholder ignore-unresolvable="true" location="classpath:wctf.properties"/>
+	
+	<!-- 加载应用属性实例，可通过  @Value("#{APP_PROP['jdbc.driver']}") String jdbcDriver 方式引用 -->
+    <util:properties id="APP_PROP" location="classpath:wctf.properties" local-override="true"/>
+     
+    <!-- 使用Annotation自动注册Bean，在主容器中不扫描@Controller注解，在SpringMvc中只扫描@Controller注解  -->
+	<context:component-scan base-package="cn.gin.wctf"><!-- base-package 如果多个，用“,”分隔 -->
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	
+	<!-- 加载数据源 --> 
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driver}"></property>
+		<property name="jdbcUrl" value="${jdbc.url}"></property>
+		<property name="user" value="${jdbc.username}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+		<property name="initialPoolSize" value="${jdbc.pool.init}"></property>
+		<property name="minPoolSize" value="${jdbc.pool.minSize}"></property>
+		<property name="maxPoolSize" value="${jdbc.pool.maxSize}"></property>
+		<property name="acquireIncrement" value="${jdbc.pool.extension}"></property>
+		<property name="checkoutTimeout" value="${jdbc.pool.timeout}"></property>
+	</bean>
+	
+	<bean id="slReply" class="cn.gin.wctf.module.post.entity.SlReply" scope="prototype"/>
+	
+	<!-- MyBatis -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
+        <property name="mapperLocations" value="classpath:mapping/**/*.xml"></property>
+    </bean>
+    
+    <!-- 扫描basePackage下所有以@Repository注解的接口 -->
+    <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+        <property name="basePackage" value="cn.gin.wctf.module"/>
+    </bean>
+    
+    <!-- 配置事物 -->
+    <!-- mybatis 使用jdbc的事务管理器 -->
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<!-- 开启事务注解驱动，使用cglib增强 -->
+	<tx:annotation-driven transaction-manager="txManager" proxy-target-class="true"/>
+	
+	<!-- 配置spring task的注解驱动 -->
+	<task:executor id="executor" pool-size="10"/>
+	<task:scheduler id="scheduler" pool-size="10"/>
+	<task:annotation-driven scheduler="scheduler" executor="executor" proxy-target-class="true"/>
+	 
+	<!-- 整合 Ehcache -->
+	<bean id="ehcacheManagerFactoryBean" name="" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<property name="configLocation" value="classpath:${ehcache.configLocation}"></property>
+	</bean>
+	<bean id="ehcacheManager" name="" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+		<property name="cacheManager" ref="ehcacheManagerFactoryBean"></property>
+	</bean>
+	
+	<!-- 异步任务调度管理器 -->
+	<bean id="ansyTaskManager" class="cn.gin.wctf.common.ansy.AnsyTaskManager" factory-method="getAnsyTaskManager"></bean>
+	
+	<!-- 配置邮箱服务器 -->
+	<bean id="emailUtils" class="cn.gin.wctf.common.util.EmailUtils">
+		<constructor-arg index="0" value="${email.form}"></constructor-arg>
+		<constructor-arg index="1" value="${email.smtp}"></constructor-arg>
+		<constructor-arg index="2" value="${email.account}"></constructor-arg>
+		<constructor-arg index="3" value="${email.password}"></constructor-arg>
+		<property name="conpany" value="${productName}"></property>
+		<property name="charset" value="${application.encoding}"></property>
+	</bean>
+</beans>

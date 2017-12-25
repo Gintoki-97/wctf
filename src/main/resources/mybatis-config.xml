@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC 
+			"-//mybatis.org//DTD Config 3.0//EN" 
+			"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<!-- 全局参数 -->
+	<settings>
+		<!-- 使全局的映射器启用或禁用缓存。 -->
+		<setting name="cacheEnabled" value="true"/>
+		
+		<!-- 全局启用或禁用延迟加载。当禁用时，所有关联对象都会即时加载。 -->
+		<setting name="lazyLoadingEnabled" value="true"/>
+		
+		<!-- 当启用时，有延迟加载属性的对象在被调用时将会完全加载任意属性。否则，每种属性将会按需要加载。 -->
+		<setting name="aggressiveLazyLoading" value="true"/>
+		
+		<!-- 是否允许单条sql 返回多个数据集  (取决于驱动的兼容性) default:true -->
+		<setting name="multipleResultSetsEnabled" value="true"/>
+		
+		<!-- 是否可以使用列的别名 (取决于驱动的兼容性) default:true -->
+		<setting name="useColumnLabel" value="true"/>
+		
+		<!-- 设置本地缓存范围 session:就会有数据的共享  statement:语句范围 (这样就不会有数据的共享 ) defalut:session -->
+        <setting name="localCacheScope" value="SESSION"/>
+		
+        <!-- 设置但JDBC类型为空时,某些驱动程序 要指定值,default:OTHER，插入空值时不需要指定类型 -->
+        <setting name="jdbcTypeForNull" value="NULL"/>
+		
+	</settings>
+	
+	<!-- 别名 -->
+	<typeAliases>
+		<typeAlias alias="slReply" type="cn.gin.wctf.module.post.entity.SlReply" />
+		<!-- 批量别名 -->
+		<package name="cn.gin.wctf.module.news.entity"/>
+		<package name="cn.gin.wctf.module.post.entity"/>
+		<package name="cn.gin.wctf.module.sys.entity"/>
+	</typeAliases>
+	
+</configuration>

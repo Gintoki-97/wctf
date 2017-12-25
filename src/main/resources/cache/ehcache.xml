@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache updateCheck="false" name="defaultCache">
+
+	<!-- ehcache持久化缓存的磁盘目录 -->
+	<diskStore path="../temp/ehcache"/>
+	
+	<!-- 
+		设定缓存的默认设置及过期策略
+			maxEntriesLocalHeap：堆内存中最大缓存对象数,0没有限制(必须设置)
+			eternal： 永不过期（为true会覆盖下面两个配置项）
+			timeToIdleSeconds: 最后一次访问300s后失效
+			timeToLiveSeconds： 没被访问过的缓存，创建后600s失效
+			overflowToDisk： 超出最大内存限制写入到磁盘中
+			statistics：开启统计
+			diskExpiryThreadIntervalSeconds：磁盘失效线程运行时间间隔
+	-->
+	
+	<defaultCache 
+		maxEntriesLocalHeap="1000" 
+		eternal="false"
+		timeToIdleSeconds="600"
+		timeToLiveSeconds="1800"
+		overflowToDisk="false" 
+		statistics="true"/>
+
+	<!-- 系统缓存 -->
+	<cache 
+		name="sysCache"
+		maxEntriesLocalHeap="1000"
+		eternal="true"
+		overflowToDisk="false"
+		statistics="true"/>
+	
+	<!-- 用户缓存 -->
+	<cache 
+		name="userCache"
+		maxEntriesLocalHeap="1000"
+		eternal="true"
+		overflowToDisk="false"
+		statistics="true"/>
+		
+	<!-- 贴子缓存 -->
+	<cache 
+		name="postCache"
+		maxEntriesLocalHeap="500"
+		eternal="false"
+		overflowToDisk="false"
+		timeToLiveSeconds="3600"
+		statistics="true"/>
+		
+	<!-- 新闻缓存 -->
+	<cache 
+		name="newsCache"
+		maxEntriesLocalHeap="500"
+		eternal="false"
+		overflowToDisk="false"
+		timeToLiveSeconds="86400"
+		statistics="true"/>
+	
+    <!-- 简单页面缓存
+    		memoryStoreEvictionPolicy： 达到内存最大限制时，按照制定策略清理缓存
+    			LRU：最近最少使用;
+    			FIFO: 先进先出;
+    			LFU: 最少访问次数
+     -->
+    <cache 
+    	name="pageCachingFilter"
+    	maxEntriesLocalHeap="1000" 
+    	eternal="false" 
+    	timeToIdleSeconds="120"
+    	timeToLiveSeconds="120" 
+    	overflowToDisk="false" 
+    	memoryStoreEvictionPolicy="LFU" 
+    	statistics="true"/>
+	
+    	
+</ehcache>

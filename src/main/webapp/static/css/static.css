@@ -1,0 +1,227 @@
+/*global style control*/
+
+body {
+	background-color: #f8f8f8;
+}
+.main {
+	width: 1079px;
+	min-height: 600px;
+    margin: 0 auto 15px;
+}
+.search-module {
+	display: inline-block;
+    vertical-align: top;
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 20px;
+}
+.layui-this {
+	border-bottom: 2px solid #5FB878;
+}
+.none {
+	display: none;	
+}
+.hidden {
+	opacity: 0;	
+}
+pre {
+    padding: 10px 15px;
+    margin: 10px 0;
+    font-size: 12px;
+    border-left: 6px solid #009688;
+    background-color: #f8f8f8;
+    font-family: Courier New;
+    overflow: auto;	
+}
+
+/** header area **/
+#header {
+	position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 65px;
+    background-color: #393D49;
+	
+}
+#header .main {
+	position: relative;
+    margin: 0 auto;
+    min-height: 0;
+}
+.header-logo {
+	position: absolute;
+	height: 65px;
+	width: 150px;	
+}
+.header-logo .logo {
+	display: inline-block;
+	width: 140%;
+	height: 100%;
+    line-height: 65px;
+    font-size: 16px;
+    text-indent: 50px;
+    font-family: 微软雅黑;
+}
+.header-link {
+	position: absolute;
+    height: 65px;
+    width: 450px;
+    left: 200px;	
+}
+.header-link .link {
+	display: inline-block;
+    width: 24%;
+    height: 100%;
+    color: #999;
+    line-height: 65px;
+    text-indent: 10px;	
+}
+.header-link .text {
+	position: relative;
+    top: -3px;
+    left: 3px;	
+}
+.header-link .link:hover {
+    color: #fff;
+}
+.header-user {
+	position: absolute;
+    height: 65px;
+    width: 435px;
+    left: 780px;	
+}
+.header-user .link {
+	display: inline-block;
+    width: 30%;
+    height: 100%;
+    color: #999;
+    line-height: 65px;
+    text-indent: 10px;	
+}
+.header-user .login {
+    width: 10%;
+}
+.header-user .reg {
+    width: 10%;
+}
+.header-user .text {
+	position: relative;
+    top: -3px;
+    left: 3px;	
+}
+.header-user .link:hover {
+    color: #fff;
+}
+.header-user .user {
+	text-indent: 0px;
+}
+.header-user .user .un {
+	text-indent: 10px;
+    width: 80px;
+    display: inline-block;
+    vertical-align: middle;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.header-user .set {
+	width: 10%;
+}
+.header-user .set .text {
+	top: 3px;
+}
+.header-user .logout {
+	width: 10%;
+}
+.header-user .logout .text {
+	top: 3px;
+}
+
+#footer {
+	position: relative;
+	padding: 20px 0 30px;
+	top: 90px; 
+	width : 1079px;
+	min-height: 200px;
+	margin: 0 auto;
+	text-align: center;
+	border-top: 1px solid #eee;
+}
+
+#footer ul {
+	overflow: hidden;
+}
+
+#footer li {
+	display: block;
+	width: 260px;
+	height: 200px;
+	float: left;
+}
+
+#footer .sns {
+
+}
+
+#footer .sns .container {
+	padding-left: 50px;
+	height: 80px;
+	line-height: 50px;
+}
+
+#footer .sns .container dl {
+	margin-top: 5px;
+	display: block;
+	width: 50px;
+	height: 50px;
+	float: left;
+}
+
+#footer .sns .container dt {
+    position: relative;
+	margin: 0 10px;
+	display: block;
+	width: 30px;
+	height: 30px;
+}
+
+#footer .sns .container dd {
+	opacity: 0;
+}
+
+#footer .sns .container dl img {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+	width: 100%;
+	height: 100%;
+}
+
+#footer li .title {
+    margin: 10px 0;
+    height: 40px;
+    line-height: 40px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #555;
+	letter-spacing: .8px;
+}
+
+#footer li .link {
+    height: 25px;
+    line-height: 25px;
+	font-size: 12px;
+    font-weight: 100;
+    text-align: left;
+    text-indent: 80px;
+	color: #666;
+}
+
+#footer li .link>a {
+    color: #777;
+}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.gin.wctf.module.news.dao.NewsDao">
+
+	<resultMap type="news" id="newsMapping">
+		<id property="id" column="news_id"/>
+		<result property="classify" column="classify"/>
+		<result property="postId" column="post_id"></result>
+		<result property="newsTime" column="post_time"></result>
+		<result property="desc" column="desc"/>
+	</resultMap>
+	
+	<select id="listLastedNews" parameterType="string" resultMap="newsMapping">
+		select n.*, p.post_time post_time from wctf_news n left join wctf_post p on n.post_id = p.post_id where n.classify = #{classify}
+	</select>
+	
+</mapper>
+				
