@@ -11,6 +11,7 @@
 		<result property="link" column="link"/>
 		<result property="imgLink" column="img_link"/>
 		<result property="tag" column="tag"/>
+		<result property="tagLink" column="tag_link"/>
 		<result property="msg" column="msg"/>
 		<result property="desc" column="desc"/>
 	</resultMap>
@@ -32,7 +33,7 @@
 	</select>
 	
 	<insert id="saveTrend">
-		insert into wctf_trend (user_id, classify, title, time, link, img_link, tag, msg, `desc`) values (#{userId}, #{classify}, #{title}, #{time}, #{link}, #{imgLink}, #{tag}, #{msg}, #{desc})
+		insert into wctf_trend (user_id, classify, title, time, link, img_link, tag, tag_link, msg, `desc`) values (#{userId}, #{classify}, #{title}, #{time}, #{link}, #{imgLink}, #{tag}, #{tagLink}, #{msg}, #{desc})
 	</insert>
 	
 </mapper>

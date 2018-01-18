@@ -10,6 +10,7 @@ import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Range;
 
 import cn.gin.wctf.common.config.Global;
+import cn.gin.wctf.common.util.StringUtils;
 import cn.gin.wctf.common.validator.post.PostSendGroup;
 import cn.gin.wctf.module.sys.entity.Trend;
 import cn.gin.wctf.module.sys.entity.TrendSupport;
@@ -57,6 +58,10 @@ public class Post implements Serializable, TrendSupport {
 	 */
 	private User user;			// 发送者
 	private List<Reply> replys;	// 回帖列表
+	
+	// Query
+	private Integer start;
+	private Integer limit;
 	
 	public Post() {}
 	
@@ -109,6 +114,10 @@ public class Post implements Serializable, TrendSupport {
 	}
 	public void setClassify(Integer classify) {
 		this.classify = classify;
+		if(classify == null) {
+			setClassifyStr(null);
+			return;
+		}
 		switch(classify) {
 		case 1:
 			setClassifyStr("讨论");
@@ -168,7 +177,19 @@ public class Post implements Serializable, TrendSupport {
 	public void setReplys(List<Reply> replys) {
 		this.replys = replys;
 	}
-	
+	public Integer getStart() {
+		return start;
+	}
+	public void setStart(Integer start) {
+		this.start = start;
+	}
+	public Integer getLimit() {
+		return limit;
+	}
+	public void setLimit(Integer limit) {
+		this.limit = limit;
+	}
+
 	@Override
 	public String toString() {
 		return "Post [id=" + id + ", title=" + title + "]";
@@ -176,8 +197,8 @@ public class Post implements Serializable, TrendSupport {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
+		final int prime = 47;
+		int result = this.getClass().hashCode();
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
@@ -204,31 +225,38 @@ public class Post implements Serializable, TrendSupport {
 	@Override
 	public Trend buildTrend() {
 		int i = (classify <= 1 && classify <= 5) ? classify : 0;
-		String postUrl = Global.getConfig("web.root.uri") + "/post/detail/" + userId;
+		String postUrl = Global.getConfig("web.root.uri") + "/post/" + id;
 		String postImgUrl = Global.getConfig("web.server") + "/static/image/post_" + i + ".jpg";
-		String cls = "";
+		String cls = StringUtils.EMPTY;
+		String tagLink = Global.getConfig("web.root.uri") + "/post/";
 		switch(classify) {
 		case 1:
 			cls = "发起了讨论";
+			tagLink += "discuss";
 			break;
 		case 2:
 			cls = "提出了问题";
+			tagLink += "question";
 			break;
 		case 3:
 			cls = "发表了建议";
+			tagLink += "suggest";
 			break;
 		case 4:
 			cls = "分享了内容";
+			tagLink += "sharing";
 			break;
 		case 5:
 			cls = "更新了公告";
+			tagLink += "notice";
 			break;
 		default:
 			cls = "发表了新贴";
+			tagLink = Global.getConfig("web.root.uri") + "/index";
 			break;
 		}
 		try {
-			return new Trend.Builder(userId, "wctf_post", title, postTime.getTime(), postUrl, postImgUrl).tag(classifyStr).build();
+			return new Trend.Builder(userId, cls, title, postTime.getTime(), postUrl, postImgUrl).tag(classifyStr).tagLink(tagLink).build();
 		} catch(Exception e) {
 			e.printStackTrace();
 			try {

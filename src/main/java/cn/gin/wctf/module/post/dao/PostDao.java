@@ -26,12 +26,10 @@ public interface PostDao {
 	
 	/**
 	 * 懒加载（不查询发贴内容），查询指定数量和分类的发贴，不包括置顶贴
-	 * @param classify	发贴分类
-	 * @param start	数据库中开始查询的位置
-	 * @param limit	查询的记录数
+	 * @param post - 封装了查询条件的发贴类
 	 * @return
 	 */
-	List<Post> listPostByClassifyLazing(int classify, int start, int limit);
+	List<Post> listPostByClassifyLazing(Post post);
 	
 	/**
 	 * <p>CRUD - R</p>
@@ -62,10 +60,10 @@ public interface PostDao {
 
 	/**
 	 * 指定分类的发贴总数
-	 * @param classify
+	 * @param post - 封装了查询条件（分类）的发贴对象
 	 * @return
 	 */
-	int countPostByClassify(Integer classify);
+	int countPostByClassify(Post post);
 
 	/**
 	 * 根据唯一键查询指定发贴的所有信息

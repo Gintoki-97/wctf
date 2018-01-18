@@ -14,6 +14,7 @@
 		<result property="header" column="header"/>
 		<result property="sign" column="sign"/>
 		<result property="punch" column="punch"/>
+		<result property="weight" column="weight"/>
 		<result property="birthday" column="birthday"/>
 		<result property="address" column="address"/>
 		<result property="location" column="location"/>
@@ -64,6 +65,9 @@
 		<if test="reg != null">
 			`reg` = #{reg},
 		</if>
+		<if test="weight != null">
+			`weight` = #{weight},
+		</if>
 	</sql>
 	
 	<select id="getUserById" parameterType="int" resultMap="userMapping">
@@ -71,7 +75,7 @@
 	</select>
 	
 	<select id="getUserByIdOptional" parameterType="int" resultMap="userMapping">
-		select user_id, nickname, gender, header, address, auth, sign from wctf_user where user_id = #{userId}
+		select user_id, nickname, gender, header, address, auth, sign, weight from wctf_user where user_id = #{userId}
 	</select>
 	
 	<select id="getUserByAccount" parameterType="string" resultMap="userMapping">
@@ -91,7 +95,7 @@
 	</select>
 	
 	<insert id="saveUser" parameterType="user">
-		insert into wctf_user (account, nickname, email, gender, password, salt, login_flag, header, sign, birthday, reg) values (#{account}, #{nickname}, #{email}, #{gender}, #{password}, #{salt}, #{loginFlag}, #{header}, #{sign}, #{birthday}, #{reg})
+		insert into wctf_user (account, nickname, email, gender, password, salt, login_flag, header, sign, birthday, reg, weight) values (#{account}, #{nickname}, #{email}, #{gender}, #{password}, #{salt}, #{loginFlag}, #{header}, #{sign}, #{birthday}, #{reg}, #{weight})
 	</insert>
 	
 	<update id="updateUserSetting" parameterType="user">

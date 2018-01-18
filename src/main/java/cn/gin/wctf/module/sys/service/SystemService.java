@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import cn.gin.wctf.common.config.Global;
 import cn.gin.wctf.common.security.shiro.session.SessionDAO;
+import cn.gin.wctf.common.util.DateUtils;
 import cn.gin.wctf.common.web.Servlets;
 import cn.gin.wctf.module.sys.entity.User;
 import cn.gin.wctf.module.sys.util.UserUtils;
@@ -62,6 +63,13 @@ public class SystemService implements InitializingBean {
 	
 	public User getUserByLoginName(String account) {
 		return UserUtils.getByLoginName(account);
+	}
+	
+	public static boolean isPunchToday(String userPunchToday) {
+		if(userPunchToday == null) {
+			return false;
+		}
+		return DateUtils.getDay().equals(userPunchToday);
 	}
 	
 	

@@ -18,7 +18,8 @@ import com.google.common.collect.Maps;
 import cn.gin.wctf.common.util.StringUtils;
 
 /**
- * <p>应用全局配置相关的工具类</p>
+ * <p>应用全局配置相关的工具类。在应用启动时，会触发当前类加载全局配置文件，并且在应用各处都可以通过此类获取配置文件中的指定项。
+ * 底层使用 Spring 的配置文件加载器。</p>
  * 
  * @author Gintoki
  * @version 2017-10-04

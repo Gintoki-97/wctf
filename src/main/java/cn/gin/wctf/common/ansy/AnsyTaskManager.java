@@ -96,8 +96,9 @@ public class AnsyTaskManager {
 		return manager;
 	}
 	
+	
 	/*
-	 * 开启异步任务管理器的守护线程
+	 * 构造代码块，开启异步任务管理器的守护线程
 	 * */
 	{
 		if(processor != null) {

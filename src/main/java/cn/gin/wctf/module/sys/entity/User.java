@@ -36,7 +36,7 @@ public class User implements Serializable {
 	@Pattern(regexp = UserRegisterGroup.PASSWORD, message = "{user.reg.password}", groups = {UserRegisterGroup.class})
 	private String password;	// 加盐密码
 	
-	private String salt;		// 盐
+	private transient String salt;		// 盐
 	private String loginFlag;	// 可登录标识，账号是否可用
 	private String header;		// 头像url
 	private String sign;		// 简介
@@ -46,13 +46,14 @@ public class User implements Serializable {
 	private String location;	// 详细的街道地址
 	private String auth;		// 认证信息
 	private Date reg;			// 注册时间
+	private Integer weight;		// 重量
 	
-	private boolean punchToday;	// 今天是否已签到
+	private String punchToday;	// 今天是否已签到
 	private Role role;			//根据角色查询用户条件
 	private Set<Role> roles = Sets.newHashSet(); 	//用户拥有的角色列表
 	
 	//
-	public static final String DEFAULT_LOCATION = "000000";
+	public static transient final String DEFAULT_LOCATION = "000000";
 	
 	public User() {
 		this.loginFlag = Global.YES;
@@ -137,14 +138,7 @@ public class User implements Serializable {
 	}
 
 	public void setHeader(String header) {
-		if(header != null && !header.startsWith("http://")) {
-			String prefix = Global.getConfig("web.root.uri");
-			if(!StringUtils.isBlank(prefix)) {
-				this.header = prefix.replace("/wctf", "") + header;
-			}
-		} else {
-			this.header = header;
-		}
+		this.header = header;
 	}
 	
 	public void setHeaderOriginal(String header) {
@@ -162,6 +156,14 @@ public class User implements Serializable {
 	public String getPunch() {
 		return punch;
 	}
+	
+	public Integer getWeight() {
+		return weight;
+	}
+
+	public void setWeight(Integer weight) {
+		this.weight = weight;
+	}
 
 	public void setPunch(String punch) {
 		if(StringUtils.isBlank(punch) || "0".equals(punch)) {
@@ -170,17 +172,17 @@ public class User implements Serializable {
 		this.punch = punch;
 		int day = Integer.valueOf(DateUtils.getDay());
 		if(punch.charAt(day - 1) == '1') {
-			setPunchToday(true);
+			setPunchToday(DateUtils.getDay());
 		} else {
-			setPunchToday(false);
+			setPunchToday("-1");
 		}
 	}
 
-	public boolean isPunchToday() {
+	public String getPunchToday() {
 		return punchToday;
 	}
 
-	public void setPunchToday(boolean punchToday) {
+	public void setPunchToday(String punchToday) {
 		this.punchToday = punchToday;
 	}
 

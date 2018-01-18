@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
@@ -15,7 +17,7 @@ import org.apache.commons.io.IOUtils;
  * @author Gintoki
  * @version 2017-11-01
  */
-public class FileUtils {
+public class FileUtils extends org.apache.commons.io.FileUtils {
 	
 	/**
      * The number of bytes in a kilobyte.
@@ -83,6 +85,18 @@ public class FileUtils {
 			IOUtils.closeQuietly(fis);
 		}
 		return null;
+	}
+	
+	
+	public static void transferStream(InputStream in, OutputStream out) throws IOException {
+		if(in == null || out == null) {
+			throw new IllegalArgumentException("The in stream or out stream cannot be null.");
+		}
+		byte[] buf = new byte[2048];
+		int len = -1;
+		while((len = in.read(buf)) > 0) {
+			out.write(buf, 0, len);
+		}
 	}
 	
 }

@@ -375,7 +375,7 @@ public class UserController {
 	 * @param id - 由页面传入的用户  ID，用于实现 RESTful 风格的 URL，同时也是为了校验用户请求是否合法
 	 * @param req - {@link HttpServletRequest}
 	 * @param resp - {@link HttpServletResponse}
-	 * @throws IOException - 在请求非法时给客户端错误响应码，可能会抛出该异常
+	 * @throws IOException 在请求非法时给客户端错误响应码，可能会抛出该异常
 	 */
 	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.GET)
 	public String trendViewRequest(@PathVariable Integer id,
@@ -394,8 +394,11 @@ public class UserController {
 			user = login;
 			req.setAttribute("other", false);
 		}
+		String trendSetting = userService.getUserTrendSetting(id);
+		req.setAttribute("trendSetting", trendSetting);
+		req.setAttribute("trendSettingChars", trendSetting.toCharArray());
 		req.setAttribute("found", user);
-		return "/user/UserPage";
+		return "/user/UserTrend";
 	}
 	
 	/**
@@ -406,7 +409,7 @@ public class UserController {
 	 * @param page - 由页面传入的当前页信息，用于实现页面懒加载
 	 * @param req - {@link HttpServletRequest}
 	 * @param resp - {@link HttpServletResponse}
-	 * @throws IOException - 在请求非法时给客户端错误响应码，可能会抛出该异常
+	 * @throws IOException 在请求非法时给客户端错误响应码，可能会抛出该异常
 	 */
 	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.POST)
 	public void trend(@PathVariable Integer id, Integer page, 
@@ -422,6 +425,39 @@ public class UserController {
 		if(!data.isSuccess()) {
 			data.setParameter("pages", 0);
 		}
+		// 响应数据
+        PrintWriter out = resp.getWriter();
+		out.write(data.toJson());
+		out.flush();
+        out.close();
+	}
+	
+	/**
+	 * <p>用户主页更新动态设置的请求，程序会根据用户的动态设置自动为用户推送不同的动态或屏蔽某些动态。</p>
+	 * <p>StatusCode: 290 ~ 299</p>
+	 * 
+	 * @param id - 由页面传入的用户  ID，用于实现 RESTful 风格的 URL，同时也是为了校验用户请求是否合法
+	 * @param trendSetting - 由页面传入的用户设置信息，一般为 0/1 字符串
+	 * @param req - {@link HttpServletRequest}
+	 * @param resp - {@link HttpServletResponse}
+	 * @throws IOException 有关 Socket IO 的错误情况可能会造成此异常抛出
+	 */
+	@RequestMapping(value = "/trend", method = RequestMethod.POST)
+	public void trendSetting(Integer userId, String trendSetting,
+			HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		// 响应头信息
+		resp.setCharacterEncoding("UTF-8");
+		resp.setContentType("application/json;charset=utf-8");
+		// 数据准备
+		ApplicationDataSupport data = new ApplicationDataSupport();
+		User login = systemService.getLogin();
+		if(!UserUtils.isUnique(login, userId)) {
+			data.setStatus(12);
+		} else {
+			data.setParameter("userId", userId);
+			data.setParameter("trendSetting", trendSetting);
+			userService.trendSetting(data);
+		} 
 		// 响应数据
         PrintWriter out = resp.getWriter();
 		out.write(data.toJson());

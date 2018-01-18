@@ -149,12 +149,11 @@ public class PostService {
 			// 保存用户动态
 			final Post p = post;
 			ansyTaskManager.submit(new AnsyTaskWithNoResult() {
-
 				@Override
 				public void execute() {
+					// 保存用户发贴动态
 					trendService.saveTrend(p);
 				}
-				
 			});
 		} else {
 			data.setStatus(302);
@@ -178,11 +177,15 @@ public class PostService {
 		} else {
 			paging.setIndex(index);
 		}
-		int clsInt = getClassifyByString(classify);
-		paging.setCount(postDao.countPostByClassify(clsInt));
+		Post query = new Post();
+		Integer clsInt = getClassifyByString(classify);
+		query.setClassify(clsInt == 0 ? null : clsInt);
+		paging.setCount(postDao.countPostByClassify(query));
 		paging.calculate();
 		// 根据分页对象从数据库中获取
-		List<Post> posts = postDao.listPostByClassifyLazing(clsInt, (paging.getIndex() - 1) * paging.getLimit(), paging.getLimit());
+		query.setStart((paging.getIndex() - 1) * paging.getLimit());
+		query.setLimit(paging.getLimit());
+		List<Post> posts = postDao.listPostByClassifyLazing(query);
 		// 更新用户和浏览量
 		for (Post post : posts) {
 			post.setUser(userService.getUserById(post.getUserId()));

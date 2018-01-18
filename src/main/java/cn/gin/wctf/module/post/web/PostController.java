@@ -165,6 +165,10 @@ public class PostController {
 		String classify = uri.substring(uri.lastIndexOf("/") + 1);
 		Page<Post> paging = postService.listPostByClassify(classify, 1);
 		model.addAttribute("paging", paging);
+		// 填充新闻数据
+		Map<String, List<News>> classifyNews = newsService.prepareIndexNews();
+		model.addAttribute("activityNews", classifyNews.get("activityNews"));
+		model.addAttribute("bbsNews", classifyNews.get("bbsNews"));
 		return "/post/PostClassify";
 	}
 	
@@ -183,6 +187,10 @@ public class PostController {
 		String classify = uri.substring(uri.lastIndexOf("/") + 1);
 		Page<Post> paging = postService.listPostByClassify(classify, index);
 		model.addAttribute("paging", paging);
+		// 填充新闻数据
+		Map<String, List<News>> classifyNews = newsService.prepareIndexNews();
+		model.addAttribute("activityNews", classifyNews.get("activityNews"));
+		model.addAttribute("bbsNews", classifyNews.get("bbsNews"));
 		return "/post/PostClassify";
 	}
 	

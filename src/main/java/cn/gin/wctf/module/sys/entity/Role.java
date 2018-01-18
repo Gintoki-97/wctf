@@ -34,7 +34,7 @@ public class Role implements Serializable {
 	@Override
 	public int hashCode() {
 		final int prime = 47;
-		int result = 1;
+		int result = this.getClass().hashCode();
 		result = prime * result + ((roleId == null) ? 0 : roleId.hashCode());
 		return result;
 	}

@@ -22,8 +22,12 @@
 		select post_id,user_id,post_time,viewed,top,close,classify_id,title from wctf_post where top > 0 order by top limit #{count}
 	</select>
 	
-	<select id="listPostByClassifyLazing" resultMap="postMapping">
-		select post_id,user_id,post_time,viewed,top,close,classify_id,title from wctf_post where top = 0 and classify_id = #{0} order by post_time desc limit #{1}, #{2}
+	<select id="listPostByClassifyLazing" parameterType="post" resultMap="postMapping">
+		select post_id,user_id,post_time,viewed,top,close,classify_id,title from wctf_post where top = 0
+		<if test="classify != null">
+			and classify_id = #{classify} 
+		</if> 
+		order by post_time desc limit #{start}, #{limit}
 	</select>
 	
 	<insert id="savePost" parameterType="post">
@@ -38,8 +42,11 @@
 		select count(post_id) from wctf_post where top > 0
 	</select>
 	
-	<select id="countPostByClassify" parameterType="int" resultType="int">
-		select count(post_id) from wctf_post where top = 0 and classify_id = #{0}
+	<select id="countPostByClassify" parameterType="post" resultType="int">
+		select count(post_id) from wctf_post where top = 0 
+		<if test="classify != null">
+			and classify_id = #{classify}
+		</if>
 	</select>
 	
 	<select id="getPostById" parameterType="int" resultMap="postMapping">

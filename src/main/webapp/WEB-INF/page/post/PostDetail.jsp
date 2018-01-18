@@ -2,6 +2,7 @@
 	contentType="text/html; charset=UTF-8" isELIgnored="false"%>
 <jsp:include page="/WEB-INF/page/templet/Support.jsp"></jsp:include>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="func" uri="http://wctf.ink/jstl/func"%>
 <%
 	String path = request.getContextPath();
 	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
@@ -12,6 +13,7 @@
 <head>
 <base href="<%=basePath%>">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link type="text/css" rel="stylesheet" href="${server}/static/css/edge.css">
 <title>WCTF - ${post.title}</title>
 <style type="text/css">
 #classify li {
@@ -284,162 +286,6 @@
     margin-bottom: 8px;
 }
 
-    
-
-.edge .search {
-	background-color: #fff;
-	margin-bottom: 15px;
-	border-radius: 2px;
-}
-
-.edge .search .layui-icon {
-	position: absolute;
-	top: 8px;
-	left: 318px;
-	display: inline-block;
-	width: 38px;
-	height: 38px;
-	line-height: 38px;
-	cursor: pointer;
-	text-align: center;
-}
-
-.edge .panel {
-	background-color: #fff;
-	margin-bottom: 15px;
-	border-radius: 2px;
-	padding: 0 15px;
-}
-
-.edge .panel .title {
-	position: relative;
-	height: 50px;
-	line-height: 50px;
-	margin-bottom: 5px;
-	border-bottom: 1px dotted #E9E9E9;
-	color: #333;
-	border-radius: 2px 2px 0 0;
-	font-size: 16px;
-}
-
-.edge .btns {
-	position: relative;
-}
-
-.edge .btns .btn {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	display: block;
-	width: 80px;
-	height: 80px;
-	text-align: center;
-	padding-top: 10px;
-	cursor: pointer;
-}
-
-.edge .btns .btn:hover {
-	color: rgb(51, 102, 255);
-}
-
-.edge .btns .btn i {
-	display: block;
-	width: 50px;
-	height: 50px;
-	margin: 0 auto;
-	font-size: 28px;
-	line-height: 50px;
-}
-
-.edge .btns .l1 {
-	position: relative;
-	top: 0px;
-	left: 0px;
-}
-
-.edge .activities {
-	font-size: 12px;
-	padding-bottom: 20px;
-}
-
-.edge .activities>ul {
-	padding-left: 15px;
-	height: 210px;
-	overflow: scroll;
-}
-
-.edge .activities>ul::-webkit-scrollbar {
-	width: 5px;
-	height: 0px;
-}
-
-.edge .activities>ul::-webkit-scrollbar-track {
-	background-color: #f5f5f5;
-}
-
-.edge .activities>ul::-webkit-scrollbar-thumb {
-	height: 1px;
-	background-color: rgb(51, 102, 255);
-}
-
-.edge .activities .activity {
-	list-style-type: none;
-	min-height: 25px;
-	max-height: 50px;
-	line-height: 25px;
-	color: #999;
-}
-
-.edge .activities .activity>i {
-	font-size: 12px;
-}
-
-.edge .activities .activity h3 {
-	font-size: 14px;
-}
-
-.edge .activities .activity a {
-	color: #999;
-	text-decoration: none;
-}
-
-.edge .activities .activity a:hover {
-	color: #444;
-}
-
-.edge .bbs-news>ul {
-	overflow: hidden;
-	padding: 10px 0 10px;
-}
-
-.edge .bbs-news>ul>li {
-	width: 100%;
-	color: #373d41;
-	font-size: 12px;
-	line-height: 20px;
-	margin-bottom: 10px;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-.edge .fast-enter>ul {
-	overflow: hidden;
-	padding: 10px 0 10px;
-}
-
-.edge .fast-enter>ul>li {
-	width: 70px;
-	float: left;
-	color: #373d41;
-	font-size: 12px;
-	line-height: 20px;
-	margin-bottom: 10px;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
 .fly-mid {
 	margin: 0 8px;
 	display: inline-block;
@@ -494,7 +340,7 @@
 						</span>
 					</div>
 					<div class="poster-info">
-						<a class="avatar"> <img src="${post.user.header}"
+						<a class="avatar"> <img src="${server}/${post.user.header}"
 							alt="${post.user.nickname}">
 						</a>
 						<div class="fly-detail-user">
@@ -539,7 +385,7 @@
 								<li class="reply" data-li="${reply.id}">
 									<div class="replyer">
 										<a class="avatar" href="${root}/user/${reply.userId}"> <img
-											src="${reply.user.header}" alt="${reply.user.nickname}">
+											src="${server}/${reply.user.header}" alt="${reply.user.nickname}">
 										</a>
 										<div class="name">
 											<a href="${root}/user/${reply.userId}" class="fly-link">
@@ -564,13 +410,14 @@
 										</div>
 										</c:if>
 									</div>
+									<c:if test="${reply.slReplys ne null && reply.slReplys.size() gt 0}">
 									<div class="slreplys">
 										<ul style="margin:0 15px;">
 										<c:forEach items="${reply.slReplys}" var="slReply" varStatus="status">
 										<c:if test="${status.count ne reply.slReplys.size()}">
 										<li style="margin-bottom: 10px;border-bottom: 1px solid #eee;padding-bottom: 10px;">
 											<div class="slreplyer">
-												<a class="avatar" href="${root}/user/${slReply.user.id}"> <img src="${slReply.user.header}" alt="${slReply.user.nickname}"></a>
+												<a class="avatar" href="${root}/user/${slReply.user.id}"> <img src="${server}/${slReply.user.header}" alt="${slReply.user.nickname}"></a>
 												<div class="slreplyer-detail">
 													<div class="slreplyer-info">
 														<div class="name">
@@ -592,7 +439,7 @@
 										<c:if test="${status.count eq reply.slReplys.size()}">
 										<li style="margin-bottom: 10px;">
 											<div class="slreplyer">
-												<a class="avatar" href="${root}/user/${slReply.user.id}"> <img src="${slReply.user.header}" alt="${slReply.user.nickname}"></a>
+												<a class="avatar" href="${root}/user/${slReply.user.id}"> <img src="${server}/${slReply.user.header}" alt="${slReply.user.nickname}"></a>
 												<div class="slreplyer-detail">
 													<div class="slreplyer-info">
 														<div class="name">
@@ -614,6 +461,7 @@
 										</c:forEach>
 										</ul>
 									</div>
+									</c:if>
 								</li>
 							</c:forEach>
 						</c:if>
@@ -642,11 +490,11 @@
 			<div class="layui-col-md4 edge">
 				<div class="search">
 					<input type="text" placeholder="社区搜索" value="" class="layui-input">
-					<i class="layui-icon">&#xe615;</i>
+					<i class="layui-icon" style="top: 7px;left: 320px;">&#xe615;</i>
 				</div>
 				<div class="panel btns">
 					<ul>
-						<c:if test="${sessionScope.user.punchToday}">
+						<c:if test="${func:isPunchToday(sessionScope.user.punchToday)}">
 						<li class="l1 btn">
 						<a>
 							<i class="layui-icon">&#xe605;</i>
@@ -654,7 +502,7 @@
 						</a>	
 						</li>
 						</c:if>
-						<c:if test="${!sessionScope.user.punchToday}">
+						<c:if test="${!func:isPunchToday(sessionScope.user.punchToday)}">
 						<li class="l1 btn">
 							<a id="punch">
 								<i class="layui-icon">&#xe610;</i>
@@ -702,14 +550,23 @@
 					</ul>
 				</div>
 				<div class="panel fast-enter">
-					<h3 class="title">快速入口</h3>
+					<h3 class="title">
+						快速入口
+						<span><a style="color:#999;" href="${root}/res/all" target="_blank">更多</a></span>
+					</h3>
 					<ul>
-						<c:forEach begin="1" end="8">
-							<li><a
-								href="https://yq.aliyun.com/download?spm=5176.100238.spm-fast-go.1.gzecLV"
-								target="_blank" data-spm-anchor-id="5176.100238.spm-fast-go.1">下载</a>
-							</li>
-						</c:forEach>
+						<li>
+							<a href="${root}/res/doc" target="_blank">文档</a>
+						</li>
+						<li>
+							<a href="${root}/res/code" target="_blank">代码</a>
+						</li>
+						<li>
+							<a href="${root}/res/tool" target="_blank">工具</a>
+						</li>
+						<li>
+							<a href="${root}/res/other" target="_blank">其它</a>
+						</li>
 					</ul>
 				</div>
 			</div>

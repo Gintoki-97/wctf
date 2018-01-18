@@ -11,7 +11,7 @@
 					style="background: url(${server}/static/image/logo5.png) no-repeat 10px;background-size: 20%;text-indent: 70px;color: #ccc;font-weight: 100;font-size: 17px;">WCTF 社区</a>
 			</div>
 			<div class="header-link">
-				<a class="link" href="" title="首页"> <i class="layui-icon"
+				<a class="link" href="${root}/index" title="首页"> <i class="layui-icon"
 					style="font-size: 27px;">&#xe68e;</i> <span class="text">首页</span>
 				</a> <a class="link" href="" title="反馈"> <i class="layui-icon"
 					style="font-size: 27px;">&#xe63a;</i> <span class="text">反馈</span>
@@ -20,7 +20,9 @@
 				</a>
 			</div>
 			<div class="header-user">
-				<input id="userId" type="hidden" value="${sessionScope.user == null ? '' : sessionScope.user.id}">
+				<input id="GlobalUser" type="hidden" value="${sessionScope.user == null ? '' : sessionScope.user.id}">
+				<input id="GlobalServer" type="hidden" value="${applicationScope.server}">
+				<input id="GlobalRoot" type="hidden" value="${applicationScope.root}">
 				<!-- 用户未登录 -->
 				<c:if test="${sessionScope.user == null }">
 					<a class="link" href="${root}/user/login" title="用户"> <i
@@ -34,9 +36,9 @@
 				</c:if>
 				<!-- 用户已登录 -->
 				<c:if test="${sessionScope.user != null }">
-					<a class="link user" href="${root}/user/setting/${sessionScope.user.id}"
+					<a class="link user" href="${root}/user/${sessionScope.user.id}"
 						title="${sessionScope.user.nickname}" style="text-indent: 0px;">
-						<img alt="" src="${sessionScope.user.header}" width="42px" height="42px"
+						<img alt="" src="${server}/${sessionScope.user.header}" width="42px" height="42px"
 						style="border-radius: 100%;" id="viewAvatar"> <cite class="un">${sessionScope.user.nickname}</cite>
 					</a>
 					<a class="link set" href="${root}/user/setting/${sessionScope.user.id}" title="设置"> <span

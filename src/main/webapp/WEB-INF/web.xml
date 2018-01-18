@@ -76,4 +76,10 @@
 		<location>/WEB-INF/page/error/500.jsp</location>
 	</error-page>
 	
+	<!-- G. System jstl library -->
+	<taglib>
+		<taglib-uri>http://wctf.ink/jstl/func</taglib-uri>
+		<taglib-location>/WEB-INF/tld/func.tld</taglib-location>
+	</taglib>
+	
 </web-app>

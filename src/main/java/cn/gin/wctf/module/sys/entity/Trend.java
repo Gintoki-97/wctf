@@ -1,5 +1,7 @@
 package cn.gin.wctf.module.sys.entity;
 
+import cn.gin.wctf.common.util.StringUtils;
+
 /**
  * <p>用户个人动态实体类。</p>
  * 
@@ -14,14 +16,15 @@ public class Trend {
 	private String classify;	// 动态分类
 	private String title;		// 动态标题
 	private Long time;			// 动态发布时间
-	private String link = "";	// 动态地址
-	private String imgLink = "";// 图片地址
+	private String link = StringUtils.EMPTY;	// 动态地址
+	private String imgLink = StringUtils.EMPTY;	// 图片地址
 	
 	private String nickname;	// 用户昵称
 	private String header;		// 用户头像
-	private String tag = "";	// 标签
-	private String msg = "";	// 信息
-	private String desc = "";	// 描述
+	private String tag = StringUtils.EMPTY;		// 标签
+	private String tagLink = StringUtils.EMPTY;	// 标签链接
+	private String msg = StringUtils.EMPTY;		// 信息
+	private String desc = StringUtils.EMPTY;	// 描述
 	
 	public Trend() {}
 	
@@ -34,6 +37,7 @@ public class Trend {
 		this.link = builder.link;
 		this.imgLink = builder.imgLink;
 		this.tag = builder.tag;
+		this.tagLink = builder.tagLink;
 		this.msg = builder.msg;
 		this.desc = builder.desc;
 	}
@@ -86,6 +90,12 @@ public class Trend {
 	public void setTag(String tag) {
 		this.tag = tag;
 	}
+	public String getTagLink() {
+		return tagLink;
+	}
+	public void setTagLink(String tagLink) {
+		this.tagLink = tagLink;
+	}
 	public String getMsg() {
 		return msg;
 	}
@@ -113,8 +123,8 @@ public class Trend {
 
 	@Override
 	public int hashCode() {
-		final int prime = this.getClass().hashCode();
-		int result = 1;
+		final int prime = 47;
+		int result = this.getClass().hashCode();
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
@@ -153,6 +163,7 @@ public class Trend {
 		private String imgLink;		// 图片地址
 		
 		private String tag;			// 标签
+		private String tagLink;		// 标签链接
 		private String msg;			// 信息
 		private String desc;		// 描述
 		
@@ -172,6 +183,11 @@ public class Trend {
 		
 		public Builder tag(String tag) {
 			this.tag = tag;
+			return this;
+		}
+		
+		public Builder tagLink(String tagLink) {
+			this.tagLink = tagLink;
 			return this;
 		}
 		

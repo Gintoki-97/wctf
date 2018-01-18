@@ -10,8 +10,11 @@ import org.springframework.web.multipart.MultipartFile;
 import cn.gin.wctf.common.ansy.AnsyTaskManager;
 import cn.gin.wctf.common.ansy.task.AnsyTaskWithNoResult;
 import cn.gin.wctf.common.config.Global;
+import cn.gin.wctf.common.util.CacheUtils;
 import cn.gin.wctf.common.util.DateUtils;
 import cn.gin.wctf.common.util.JCodec;
+import cn.gin.wctf.common.util.JedisUtils;
+import cn.gin.wctf.common.util.RedisIndex;
 import cn.gin.wctf.module.sys.dao.UserDao;
 import cn.gin.wctf.module.sys.entity.ApplicationDataSupport;
 import cn.gin.wctf.module.sys.entity.User;
@@ -61,7 +64,7 @@ public class UserService {
 			client.setSalt(salt);
 			client.setPassword(JCodec.md5SaltEncode(pwd, salt));
 			client.setLoginFalg("1");
-			client.setHeaderOriginal("/user/avatar/default.jpg");
+			client.setHeaderOriginal("user/avatar/default.jpg");
 			client.setSign("一句话签名");
 			client.setReg(new Date());
 			data.clearParams();
@@ -111,7 +114,7 @@ public class UserService {
 		if(userDao.updatePunchByUserId(new String(punchCharArray), login.getId()) == 1) {
 			data.setStatus(240);
 			data.setMsg("签到成功");
-			login.setPunchToday(true);
+			login.setPunchToday(DateUtils.getDay());
 		} else {
 			data.setStatus(242);
 			data.setMsg("数据库请求出现异常");
@@ -197,7 +200,7 @@ public class UserService {
 			data.clearParams();
 			return;
 		}
-		String imgServer = "/user/avatar/" + avatarName;
+		String imgServer = "user/avatar/" + avatarName;
 		login.setHeader(imgServer);
 		if(userDao.updateUserAvatar(login.getId(), imgServer) == 1) {
 			data.setStatus(260);
@@ -316,5 +319,51 @@ public class UserService {
 	 */
 	public boolean existsByAccount(String account) {
 		return userDao.existsByAccount(account) == 1;
-	}	
+	}
+
+	/**
+	 * <p>通过指定的用户 ID 查询对应的用户的动态设置。</p>
+	 * 
+	 * @param userId - 指定的用户 ID
+	 * @return 对应的用户的动态设置
+	 */
+	public String getUserTrendSetting(Integer userId) {
+		String key = "user:" + userId + ":trend:setting";
+		String trendStr = (String) CacheUtils.get(CacheUtils.USER_CACHE, key);
+		if(trendStr == null || !trendStr.matches("[0|1]{4}")) {
+			trendStr = JedisUtils.get(key, RedisIndex.USER_CACHE);
+			if(trendStr == null || !trendStr.matches("\\d{4}")) {
+				trendStr = "1111";
+				CacheUtils.put(CacheUtils.USER_CACHE, key, "1111");
+				JedisUtils.set(key, "1111", JedisUtils.ONE_DAY, RedisIndex.USER_CACHE);
+			} else {
+				CacheUtils.put(CacheUtils.USER_CACHE, key, trendStr);
+			}
+		}
+		return trendStr;
+	}
+	
+	/**
+	 * <p>更新用户的动态设置，程序会根据用户的动态设置来显示指定类型的动态信息。</p>
+	 * 
+	 * @param data - 应用数据流载体
+	 * @param data$Integer$userId - 由页面传入的用户  ID
+	 * @param data$String$trendSetting - 由页面传入的用户设置信息，一般为 0/1 字符串
+	 */
+	public void trendSetting(ApplicationDataSupport data) {
+		Integer userId = null;
+		String trendSetting = null;
+		try {
+			userId = data.getParameter("userId");
+			trendSetting = data.getParameter("trendSetting");
+		} catch(Exception e) {
+			data.setStatus(291);
+			data.setMsg("数据准备失败");
+		}
+		String key = "user:" + userId + ":trend:setting";
+		CacheUtils.put(CacheUtils.USER_CACHE, key, trendSetting);
+		JedisUtils.set(key, trendSetting, RedisIndex.USER_CACHE);
+		data.setStatus(290);
+		data.setMsg("动态设置成功");
+	}
 }

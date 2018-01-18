@@ -1,5 +1,6 @@
 package cn.gin.wctf.common.paging;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -9,8 +10,10 @@ import java.util.List;
  * @author Gintoki
  * @version 2017-10-05
  */
-public class Page<T> {
+public class Page<T> implements Serializable {
 	
+	private static final long serialVersionUID = -4879815869242845239L;
+
 	/** 当前页  **/
 	private int index;
 	

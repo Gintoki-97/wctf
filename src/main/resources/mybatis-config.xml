@@ -35,6 +35,7 @@
 		<!-- 批量别名 -->
 		<package name="cn.gin.wctf.module.news.entity"/>
 		<package name="cn.gin.wctf.module.post.entity"/>
+		<package name="cn.gin.wctf.module.resource.entity"/>
 		<package name="cn.gin.wctf.module.sys.entity"/>
 	</typeAliases>
 	

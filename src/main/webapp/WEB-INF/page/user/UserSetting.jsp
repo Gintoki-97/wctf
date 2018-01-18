@@ -206,7 +206,7 @@
 						<div class="layui-form-item">              
 							<div class="avatar-add">                
 								<input class="layui-upload-file" type="file" name="file">
-								<img src="${sessionScope.user.header}" id="reviewAvatar">
+								<img src="${server}/${sessionScope.user.header}" id="reviewAvatar">
 								<button type="button" class="layui-btn upload-img" id="uploadAvatar">                  
 									<i class="layui-icon"></i>
 									上传头像                

@@ -8,6 +8,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -84,7 +85,7 @@ public class FormAuthenticationFilter extends org.apache.shiro.web.filter.authc.
 		if (StringUtils.isBlank(rememberMe)){
 			rememberMe = StringUtils.toString(request.getAttribute(getRememberMeParam()), StringUtils.EMPTY);
 		}
-		return StringUtils.toBoolean(rememberMe);
+		return BooleanUtils.toBoolean(rememberMe);
 	}
 	
 	/**

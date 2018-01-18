@@ -2,9 +2,9 @@
 	contentType="text/html; charset=UTF-8" isELIgnored="false"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <div id="footer">
-	<ul>
+	<ul class="links">
 		<li>
-			<div class="title">Main Links</div>
+			<div class="title">About Gintoki</div>
 			<div class="link">
 				<a>Gintoki 个人首页</a>
 			</div>
@@ -12,40 +12,72 @@
 				<a>Gintoki 个人简历</a>
 			</div>
 			<div class="link">
-				<a>Gintoki 简易 SSH 社区</a>
-			</div>
-		</li>
-		<li style="border-right: 1px dashed #ddd;">
-			<div class="title">Third-Party Links</div>
-			<div class="link">
-				<a target="_blank">Gintoki 个人首页</a>
-			</div>
-			<div class="link">
-				<a target="_blank">Gintoki 个人简历</a>
-			</div>
-			<div class="link">
-				<a target="_blank">Gintoki 简易 SSH 社区</a>
+				<a target="_blank">Gintoki 职业生涯</a>
 			</div>
 		</li>
 		<li>
-			<div class="title">LEGAL</div>
+			<div class="title">Other App</div>
 			<div class="link">
-				<a href="${root}/index">WCTF 社区</a> 2017 © <a href="${root}/index" target="_blank">wctf.ink</a>
+				<a target="_blank">图书销售网</a>
 			</div>
 			<div class="link">
-				云主机：<a>京东云备案</a>
+				<a target="_blank">企业 CRM 信息管理平台</a>
 			</div>
 			<div class="link">
-				联系人：<a href="mailto:ew_gintoki@gmail.com">ew_gintoki@gmail.com</a>
+				<a target="_blank">简易 SSH 社区</a>
 			</div>
-			<div class="link"></div>
+			<div class="link">
+				<a target="_blank">旅行网</a>
+			</div>
 		</li>
-		<li class="sns">
+		<li>
+			<div class="title">Third-Party Links</div>
+			<div class="link">
+				<a target="_blank" href="javascript:void(0);">美食天下</a>
+			</div>
+			<div class="link">
+				<a target="_blank" href="javascript:void(0);">医疗药品销售系统</a>
+			</div>
+			<div class="link">
+				<a target="_blank" href="javascript:void(0);">网络课程教育平台</a>
+			</div>
+			<div class="link">
+				<a target="_blank" href="javascript:void(0);">二手图书交易系统</a>
+			</div>
+		</li>
+		<li>
+			<div class="title">Applied</div>
+			<div class="link">
+				<a target="_blank" href="http://www.apache.org" title="Apache 软件基金会">Apache</a>
+			</div>
+			<div class="link">
+				<a target="_blank" href="http://www.layui.com" title="Layui - 前端模块化开发框架">Layui</a>
+			</div>
+			<div class="link">
+				<a target="_blank" href="https://github.com" title="Github - 软件项目托管平台">Github</a>
+			</div>
+			<div class="link">
+				<a target="_blank" href="https://stackoverflow.com" title="StackOverflow - IT技术问答网站">Stack Overflow</a>
+			</div>
+		</li>
+	</ul>
+	<div class="infos">
+		<div style="text-indent: 80px;">
+			<p>WCTF 社区  © 2017 <a href="${root}/index" target="_blank"> wctf.ink </a> Apache License</p>
+			<p class="help">
+				<a href="javascript:void(0);">举报</a>
+				<a href="javascript:void(0);">联系</a>
+				<a href="javascript:void(0);">众筹</a>
+				<a href="javascript:void(0);">码云</a>
+			</p>
+			<!-- <p>Email: <a href="mailto://ew_gintoki@gmail.com">ew_gintoki@gmail.com</a></p> -->
+		</div>
+		<div class="sns">
 			<div class="title hidden">SNS</div>
 			<div class="container">
 				<dl>
 					<dt>
-						<a href="https://github.com/Gin-git" title="Github" target="_blank"><img src="${server}/static/image/svg/github.svg"></a>
+						<a href="https://github.com/Gintoki-97" title="Github" target="_blank"><img src="${server}/static/image/svg/github.svg"></a>
 					</dt>
 					<dd>Github</dd>
 				</dl>
@@ -68,8 +100,8 @@
 					<dd>Facebook</dd>
 				</dl>
 			</div>
-		</li>
-	</ul>
+		</div>
+	</div>
 </div>
 
 <script type="text/javascript" src="${server}/static/layui/layui.js"></script>

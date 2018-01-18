@@ -3,7 +3,8 @@ package cn.gin.wctf.common.ansy;
 import java.util.concurrent.ThreadFactory;
 
 /**
- * 用于异步任务管理器创建守护线程的线程工厂
+ * <p>用于异步任务管理器创建守护线程的线程工厂，所有需要交由异步管理器的线程都需要此工厂来创建，因为提交到异步任务管理器中的
+ * 任务默认都是优先级较低的守护任务。</p>
  * 
  * @author Gintoki
  * @version 2017-11-20

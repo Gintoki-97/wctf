@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.gin.wctf.module.resource.dao.ResourceDao">
+
+	<resultMap type="resource" id="resMapping">
+		<id property="id" column="res_id"/>
+		<result property="userId" column="user_id"/>
+		<result property="name" column="name"/>
+		<result property="classify" column="classify"/>
+		<result property="img" column="img"/>
+		<result property="path" column="path"/>
+		<result property="uploadTime" column="upload_time"/>
+		<result property="downloads" column="downloads"/>
+		<result property="size" column="size"/>
+		<result property="tagStr" column="tags"/>
+		<result property="weight" column="weight"/>
+		<result property="desc" column="res_desc"/>
+	</resultMap>
+	
+	<sql id="resQueryItem">
+		<if test="itemCls != null">
+			and `classify` = #{itemCls}
+		</if>
+		<if test="itemTag != null">
+			and `tags` like #{itemTag}
+		</if>
+	</sql>
+	
+	<select id="countRes" resultType="int">
+		select count(res_id) from wctf_res
+	</select>
+	
+	<select id="countResByClassify" parameterType="int" resultType="int">
+		select count(res_id) from wctf_res where classify = #{classify}
+	</select>
+	
+	<select id="countResByItem" parameterType="resource" resultType="int">
+		select count(res_id) from wctf_res
+		<where>
+			<include refid="resQueryItem"></include>
+		</where>
+	</select>
+	
+	<select id="getResById" parameterType="int" resultMap="resMapping">
+		select * from wctf_res where res_id = #{0}
+	</select>
+	
+	<select id="listRes" resultMap="resMapping">
+		select * from wctf_res order by upload_time desc limit #{0}, #{1}
+	</select>
+	
+	<select id="listResByClassify" resultMap="resMapping">
+		select * from wctf_res where classify = #{0} order by upload_time desc limit #{1}, #{2}
+	</select>
+	
+	<select id="listResByItem" resultMap="resMapping">
+		select * from wctf_res
+		<where>
+			<include refid="resQueryItem"></include>
+		</where>
+		<if test="itemOrder == null">
+			order by upload_time desc
+		</if>
+		<if test="itemOrder != null">
+			order by downloads desc
+		</if>
+		limit #{itemStart}, #{itemLimit}
+	</select>
+	
+	<update id="updateResDownloads" parameterType="int">
+		update wctf_res set downloads = downloads + 1 where res_id = #{0}
+	</update>
+	
+</mapper>
+				

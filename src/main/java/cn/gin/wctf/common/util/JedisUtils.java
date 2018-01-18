@@ -316,6 +316,29 @@ public class JedisUtils {
 		}
 		return value;
 	}
+	
+	/**
+	 * 设置缓存数据
+	 * @param key 缓存键
+	 * @param value 缓存值
+	 * @param timeout 数据的超时时间，0为不超时
+	 * @return 是否设置成功，redis格式
+	 */
+	public static String set(String key, String value, RedisIndex index) {
+		String result = null;
+		Jedis jedis = null;
+		try {
+			jedis = getResource();
+			jedis.select(index.getIndex());
+			result = jedis.set(key, value);
+			logger.debug("set {} = {}", key, value);
+		} catch (Exception e) {
+			logger.warn("set {} = {}", key, value, e);
+		} finally {
+			jedisPool.returnResource(jedis);
+		}
+		return result;
+	}
 
 	/**
 	 * 设置缓存数据
@@ -500,14 +523,14 @@ public class JedisUtils {
 	 * @param index 数据库的索引下标
 	 * @return
 	 */
-	public static String setObject(String key, Object value, int timeout, RedisIndex index) {
+	public static String setObject(String key, Object value, Integer timeout, RedisIndex index) {
 		String result = null;
 		Jedis jedis = null;
 		try {
 			jedis = getResource();
 			jedis.select(index.getIndex());
 			result = jedis.set(getBytesKey(key), toBytes(value));
-			if (timeout != 0) {
+			if (timeout != null) {
 				jedis.expire(key, timeout);
 			}
 			logger.debug("setObject {} = {}", key, value);

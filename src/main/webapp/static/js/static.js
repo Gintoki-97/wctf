@@ -14,10 +14,13 @@
 			user_setting : "user/setting",
 			user_rsp  : "user/reset",
 			user_punch: "user/punch",
+			user_trend: "",
+			user_trend_Setting:"user/trend",
 			post_send : "post/send",
 			post_reply: "post/reply",
 			post_coll : "post/coll",
-			user_trend: "",
+			res		  : "res",
+			res_down  : "res/down",
 			sl_reply  : "reply",
 			reply_thumb  : "reply/thumb",
 			util_loc  : "http://114.67.139.119/location/code",
@@ -26,7 +29,26 @@
 			url_stamp_rand : "?stamp=" + Math.random(),
 			editor : 0
 	};
-	Global.user = $("#userId").val();
+	Global.user = $("#GlobalUser").val();
+	Global.server = $("#GlobalServer").val();
+	Global.root = $("#GlobalRoot").val();
+	
+	/**
+	 * Note. 判断一个字符串是否是空字符串
+	 */
+	var isEmpty = function(str) {
+		if(str == null) {
+			return true;
+		}
+		if(typeof(str) == "undefined") {
+			return true;
+		}
+		if(str.length == 0) {
+			return true;
+		}
+		return false;
+	}
+	
 	// -----------------------
 	// Global params config end
 	// -----------------------
@@ -558,21 +580,18 @@
 					if(url.lastIndexOf("/") == (url.length - 1)) {
 						url = url.slice(0, -1);
 					}
-					if((url.match(/index$/) != null) || (url.match(/index\/page.+$/) != null)) {
-						window.location.href = $("base").attr("href") + "index/page/" + obj.curr + "#main";
-					} else if((url.match(/discuss$/) != null) || (url.match(/discuss\/page.+$/) != null)) {
-						window.location.href = $("base").attr("href") + "post/discuss/page/" + obj.curr;
-					} else if((url.match(/question$/) != null) || (url.match(/question\/page.+$/) != null)) {
-						window.location.href = $("base").attr("href") + "post/question/page/" + obj.curr;
-					} else if((url.match(/suggest$/) != null) || (url.match(/suggest\/page.+$/) != null)) {
-						window.location.href = $("base").attr("href") + "post/suggest/page/" + obj.curr;
-					} else if((url.match(/sharing$/) != null) || (url.match(/sharing\/page.+$/) != null)) {
-						window.location.href = $("base").attr("href") + "post/sharing/page/" + obj.curr;
-					} else if((url.match(/notice$/) != null) || (url.match(/notice\/page.+$/) != null)) {
-						window.location.href = $("base").attr("href") + "post/notice/page/" + obj.curr;
+					var newUrl = null;
+					if(url.match(/page\/\d+$/) != null) {
+						var u = url.substring(0, url.lastIndexOf("/") + 1);
+						newUrl = u + obj.curr;
 					} else {
-						window.location.href = $("base").attr("href") + "index/page/" + obj.curr;
+						newUrl = u + "/page/" + obj.curr;
 					}
+					var queryItem = $("#paging").attr("data-qi");
+					if(!isEmpty(queryItem)) {
+						newUrl = newUrl + "?" + queryItem;
+					}
+					window.location.href = newUrl;
 				}
 			}
 		});
@@ -609,6 +628,26 @@
 			var date = new Date(mils);
 			$(this).html(util.timeAgo(date, true));
 		});
+		$(".res-time").each(function() {
+			var mils = parseInt($(this).attr("data-ti"));
+			var date = new Date(mils);
+			$(this).html(util.timeAgo(date, true));
+		});
+		$(".res-time-det").each(function() {
+			var mils = parseInt($(this).attr("data-ti"));
+			$(this).html(util.toDateString(mils, "yyyy-MM-dd HH:mm:ss"));
+		});
+		$(".res-size").each(function() {
+			var size = parseInt($(this).attr("data-si"));
+			if(size < 1024) {
+				$(this).html(size.toFixed(2) + "B");
+			} else if(size < 1024 * 1024 ) {
+				$(this).html((size/1024).toFixed(2) + "KB");
+			} else if(size < 1024 * 1024 * 1024 ) {
+				$(this).html((size/(1024 * 1024)).toFixed(2) + "MB");
+			}
+		});
+		
 			// -------------------
 			// 7.2 layui 工具集格式化新闻日期
 			// -------------------
@@ -820,8 +859,8 @@
 		});
 		if(window.location.href.match(base + Global.user_setting) != null) {
 			$("#userSettingAddress .request").trigger("click");
-		} 
-		
+		}
+
 		// -----------------------
 		// 12. layui 回贴模块
 		// -----------------------
@@ -858,7 +897,6 @@
 						content: '未知错误，请稍后再试'
 					});
 				}
-				
 			});
 		});
 			// -----------------------
@@ -897,7 +935,6 @@
 						content: '未知错误，请稍后再试'
 					});
 				}
-				
 			});
 		});
 			// -----------------------
@@ -905,7 +942,7 @@
 			// -----------------------
 		$(".reply .reply-info .slreply").on("click", function(event) {
 			if(Global.user == "") {
-				Global.user = $("#userId").val()
+				Global.user = $("#userId").val();
 				if(Global.user == "") {
 					layer.msg('您还未登录~');
 					return;
@@ -993,8 +1030,9 @@
 				// -----------------------
 				// 动态设置按钮
 				// -----------------------
+			var trendSettingLayer = null;
 			$(".dynamic-setting").on("click", function() {
-				layer.open({
+				trendSettingLayer = layer.open({
 					type: 1,
 					shade: .3,
 					area: "640px",
@@ -1002,6 +1040,35 @@
 					title: false,
 					content: $('.dynamic-setting-panel')
 				});	
+			});
+				// -----------------------
+				// 动态设置提交
+				// -----------------------
+			form.on('submit(UserTrend)', function(data) {
+				var trend1 = data.field.c1 == "on" ? "1" : "0";
+				var trend2 = data.field.c2 == "on" ? "1" : "0";
+				var trend3 = data.field.c3 == "on" ? "1" : "0";
+				var trend4 = data.field.c4 == "on" ? "1" : "0";
+				var trend = trend1 + trend2 + trend3 + trend4;
+				$.ajax({
+					url: base + Global.user_trend_Setting,
+					type: "POST",
+					data: {
+						userId: Global.user,
+						trendSetting: trend
+					},
+					success: function() {
+						// Nothing todo
+					},
+					error: function(XMLHttpRequest, textStatus, errorThrown) {
+						layer.open({
+							title: '来自外太空',
+							content: '未知错误，请稍后再试'
+						});
+					}
+				});
+				if(trendSettingLayer != null)
+					layer.close(trendSettingLayer);
 			});
 				// -----------------------
 				// 流加载用户动态
@@ -1024,16 +1091,18 @@
 							url: base + "user/" + userPageId,
 							type: "POST",
 							success: function(resp) {
-								var templet = '<li class="item layui-clear"><div class="header"><img alt=""src="#{trend.header}"style="width: 100%; border-radius: 100%;"></div><div class="content"><div class="head"><div class="name"><a class=""href="#{trend.userId}"target="_blank">#{trend.nickname}</a></div><div class="time">#{trend.time}</div><div class="title">#{trend.classify}</div></div><div class="body"><a class="fl"href="#{trend.link}"target="_blank"><img src="#{trend.imgLink}"width="40"height="40"></a><div class="detail"><div class="tag"><span>来自</span><a href="#{trend.link}"target="_blank"><span class="ml10">#{trend.tag}</span></a></div><div class="subtitle"><a href="#{trend.link}"target="_blank">#{trend.title}</a></div></div></div><hr></div></li>';
+								var templet = '<li class="item layui-clear"><div class="header"><img alt=""src="#{trend.header}"style="width: 100%; border-radius: 100%;"></div><div class="content"><div class="head"><div class="name"><a class=""href="#{root}/user/#{trend.userId}">#{trend.nickname}</a></div><div class="time">#{trend.time}</div><div class="title">#{trend.classify}</div></div><div class="body"><a class="fl"href="#{root}/#{trend.link}"><img src="#{server}/#{trend.imgLink}"width="40"height="40"></a><div class="detail"><div class="tag"><span>来自</span><a href="#{root}/#{trend.tagLink}"target="_blank"><span class="ml10" style="color: #666;">#{trend.tag}</span></a></div><div class="subtitle"><a href="#{trend.link}"> #{trend.title} </a></div></div></div><hr></div></li>';
 								layui.each(resp.param.trends, function(index, item) {
 									var s = templet;
 									var time = util.timeAgo(new Date(item.time), true);
-									s = s.replace(/#{trend.id}/g, item.id).replace(/#{trend.userId}/g, item.userId).
+									s = s.replace(/#{server}/g, Global.server).replace(/#{root}/g, Global.root).
+										  replace(/#{trend.id}/g, item.id).replace(/#{trend.userId}/g, item.userId).
 										  replace(/#{trend.classify}/g, item.classify).replace(/#{trend.title}/g, item.title).
 										  replace(/#{trend.time}/g, time).replace(/#{trend.link}/g, item.link).
 										  replace(/#{trend.imgLink}/g, item.imgLink).replace(/#{trend.nickname}/g, item.nickname).
 										  replace(/#{trend.header}/g, item.header).replace(/#{trend.tag}/g, item.tag).
-										  replace(/#{trend.msg}/g, item.msg).replace(/#{trend.desc}/g, item.desc);
+										  replace(/#{trend.tagLink}/g, item.tagLink).replace(/#{trend.msg}/g, item.msg).
+										  replace(/#{trend.desc}/g, item.desc);
 									lis.push(s);
 							    });
 								lis.push(resp.param.trends);
@@ -1181,35 +1250,7 @@
 		}
 		
 		// -----------------------
-		// 6. 特定 URL 初始化函数
-		// -----------------------
-		var location = window.location.href;
-		if(location.match(Global.user_setting) != null) {
-			// -----------------------
-			// 6.1 jquery 预加载用户信息设置界面
-			// -----------------------
-			$("#userSettingAddress .request").trigger("click");
-		} else if(location == (base + Global.post_send)) {
-			// -----------------------
-			// 6.2 jquery 渲染Simditor编辑器
-			// -----------------------
-			var editor = new Simditor({
-				textarea: $("#simditorPostContent"),	// 编辑器容器
-				// 工具条（默认true，也可以传入按钮组）
-				toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'ol', 'ul',
-					'blockquote', 'code', 'link', 'hr', 'alignment'],
-					tabIndent: true						// 启用tab键缩进（默认true）
-			});
-		} else if(location.match("/post/\\d+") != null) {
-			$(".reply .reply-info .thumb").each(function() {
-				if($(this).attr("data-th") == "1") {
-					$(this).css("color", "#FF4444");
-				}
-			});
-		}
-		
-		// -----------------------
-		// 7. 收起回贴列表
+		// 6. 收起回贴列表
 		// -----------------------
 		$(".reply .fold").on("click", function() {
 			var foldEle = $(this);
@@ -1224,10 +1265,9 @@
 				}
 			});
 		});
-
-
+		
 		// -----------------------
-		// 8. 提问按钮设置 Cookie
+		// 7. 提问按钮设置 Cookie
 		// -----------------------
 		$(".post-send-btn").on("click", function() {
 			var val = $(this).attr("data-val");
@@ -1239,6 +1279,226 @@
 			}
 			window.location.href = base + Global.post_send;
 		});
+		
+		
+		// -----------------------
+		// Eof. 特定 URL 初始化函数
+		// -----------------------
+		var location = window.location.href;
+		if(location.match(Global.user_setting) != null) {
+			// -----------------------
+			// a. jquery 预加载用户信息设置界面
+			// -----------------------
+			$("#userSettingAddress .request").trigger("click");
+		} else if(location == (base + Global.post_send)) {
+			// -----------------------
+			// b. jquery 渲染Simditor编辑器
+			// -----------------------
+			var editor = new Simditor({
+				textarea: $("#simditorPostContent"),	// 编辑器容器
+				// 工具条（默认true，也可以传入按钮组）
+				toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'ol', 'ul',
+					'blockquote', 'code', 'link', 'hr', 'alignment'],
+					tabIndent: true						// 启用tab键缩进（默认true）
+			});
+		} else if(location.match("/post/\\d+") != null) {
+			// -----------------------
+			// c. jquery 初始化查看发贴详情页面
+			// -----------------------
+			$(".reply .reply-info .thumb").each(function() {
+				if($(this).attr("data-th") == "1") {
+					$(this).css("color", "#FF4444");
+				}
+			});
+		} else if(location.match(Global.res) != null) {
+			// -----------------------
+			// d. jquery 初始化资源索引页
+			// -----------------------
+			// 初始化方法
+			var resIndexSubmit = function() {
+				var items = $(".query-items").attr("data-qi");
+				var indexItems = $(".query-item-console").attr("data-qi");
+				if(items == indexItems) {
+					return;
+				}
+				if(items == "0-0-0" || items == "0-0-1") {
+					$(".query-item-console .items li:gt(0)").remove();
+				} else {
+					var arr = items.split("-");
+					var tagVal = parseInt(arr[0]);
+					var clsVal = parseInt(arr[1]);
+					if(tagVal != 0) {
+						var tagEle = $(".query-item-console .items li:eq(1)");
+						tagEle.find("a").text($(".query-items .tags .items .option:eq(" + tagVal + ")").text());
+						tagEle.css("display", "list-item");
+					} else {
+						$(".query-item-console .items li:eq(1)").css("display", "none");
+					}
+					if(clsVal != 0) {
+						var tagEle = $(".query-item-console .items li:eq(2)");
+						tagEle.find("a").text($(".query-items .cls .items .option:eq(" + clsVal + ")").text());
+						tagEle.css("display", "list-item");
+					} else {
+						$(".query-item-console .items li:eq(2)").css("display", "none");
+					}
+				}
+				// 提交表单
+				$("#ResSearchForm input").val(items);
+				$("#ResSearchForm").submit();
+			}
+			// 提交选项
+			var indexPage = $("body").attr("data-page");
+			if(indexPage == "index") {
+				var itemsStr = $(".query-items").attr("data-qi");
+				if(isEmpty(itemsStr)) {
+					itemsStr = "0-0-0";
+					$(".query-items").attr("data-qi", itemsStr);
+				}
+				var items = itemsStr.split("-");
+				for (var i = 0; i < items.length; i++) {
+					if(i == 0) {
+						var index = parseInt(items[0]);
+						var firEle = $(".query-items .tags .items .option:eq(" + index + ")");
+						firEle.addClass("layui-this");
+						if(index > 0) {
+							$(".query-item-console .items li:eq(1) a").text(firEle.text());
+							$(".query-item-console .items li:eq(1)").css("display", "list-item");
+						}
+					} else if(i == 1) {
+						var index = parseInt(items[1]);
+						var secEle = $(".query-items .cls .items .option:eq(" + index + ")");
+						secEle.addClass("layui-this");
+						if(index > 0) {
+							$(".query-item-console .items li:eq(2) a").text(secEle.text());
+							$(".query-item-console .items li:eq(2)").css("display", "list-item");
+						}
+					} else if(i == 2) {
+						var index = parseInt(items[2]);
+						if(index == 1)
+							$(".order-item .option:last").addClass("layui-this");
+						else
+							$(".order-item .option:first").addClass("layui-this");
+					}
+				}
+				// Tag 索引
+				$(".tags .option").on("click", function() {
+					var index = $(this).parent().index();
+					var items = $(".query-items").attr("data-qi").split("-");
+					items[0] = index;
+					$(".query-items").attr("data-qi", items.join("-"));
+					$(this).parent().parent().find(".layui-this").removeClass("layui-this");
+					$(this).toggleClass("layui-this");
+					resIndexSubmit();
+				});
+				// Classify 索引
+				$(".cls .option").on("click", function() {
+					var index = $(this).parent().index();
+					var items = $(".query-items").attr("data-qi").split("-");
+					items[1] = index;
+					$(".query-items").attr("data-qi", items.join("-"));
+					$(this).parent().parent().find(".layui-this").removeClass("layui-this");
+					$(this).toggleClass("layui-this");
+					resIndexSubmit();
+				});
+				// 排序方式
+				$(".order-item .option").on("click", function() {
+					var index = $(this).attr("data-in");
+					var items = $(".query-items").attr("data-qi").split("-");
+					items[2] = index;
+					$(".query-items").attr("data-qi", items.join("-"));
+					$(this).parent().parent().find(".layui-this").removeClass("layui-this");
+					$(this).toggleClass("layui-this");
+					resIndexSubmit();
+				});
+				// 显示删除已选条件按钮
+				$(".query-item-console li").hover(function() {
+					$(this).find(".close").removeClass("hidden");
+				}, function() {
+					$(this).find(".close").addClass("hidden");
+				});
+				// 删除已选条件
+				$(".query-item-console .close").on("click", function() {
+					var index = $(this).parent().index();
+					var items = $(".query-items").attr("data-qi").split("-");
+					items[index - 1] = 0;
+					$(".query-items").attr("data-qi", items.join("-"));
+					$(this).parent().remove();
+					resIndexSubmit();
+				});
+			}
+			// -----------------------
+			// e. jquery 初始化资源详情页
+			// -----------------------
+			else if(indexPage == "detail") {
+				// 生成二维码
+				var qrcode = new QRCode(document.getElementById("ResDetailQRcode"), {
+					width : 100,
+					height : 100
+				});
+				var text = $("#ResDetailQRcode").attr("data-qr");
+				if(isEmpty(text)) {
+					text = "请求无效！"
+				}
+				qrcode.makeCode(text);
+				// 文件下载按钮
+				$("#ResDetailDownload").on("click", function() {
+					if(Global.user == "") {
+						Global.user = $("#userId").val();
+						if(Global.user == "") {
+							layer.msg('您还未登录~');
+							return;
+						}
+					}
+					var resId = $(this).attr("data-id");
+					var thisEle = $(this);
+					if(isEmpty(resId)) {
+						layer.open({
+							title: '来自服务器',
+							content: "请求无效"
+						});
+						return;
+					}
+					$.ajax({
+						url: base + Global.res_down + "/" + resId,
+						type: "POST",
+						async: true,
+						scriptCharset: "utf-8",
+						data: {
+							userId: Global.user
+						},
+						success: function(resp) {
+							if(!resp.success) {
+								// 非法请求
+								layer.open({
+									title: '来自服务器',
+									content: resp.msg
+								});
+							} else {
+								// 新窗口发起下载请求
+								var downUrl = base + Global.res_down + "/" + resId;
+								var form = "<form id='ResDetailDownProcessor' style='display:none;' target='_blank' action='#{downUrl}'><input type='hidden' name='userId' value='#{userId}'></form>";
+								form = form.replace(/#{downUrl}/g, downUrl).replace(/#{userId}/g, Global.user);
+								$("body").append(form);
+								$("body form").submit();
+								$("body form").remove();
+							}
+						},
+						error: function(XMLHttpRequest, textStatus, errorThrown) {
+							layer.open({
+								title: '来自外太空',
+								content: '未知错误，请稍后再试'
+							});
+						}
+					});
+				});
+				// 二维码生成按钮
+				$("#ResDetailQR").hover(function() {
+					$("#ResDetailQRcode").css("display", "block");
+				}, function() {
+					$("#ResDetailQRcode").css("display", "none");
+				});
+			}
+		}
 		
 	});
 	

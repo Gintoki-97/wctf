@@ -21,7 +21,7 @@ import cn.gin.wctf.common.config.Global;
 import cn.gin.wctf.common.util.StringUtils;
 
 /**
- * Http 与 Servlet 相关操作工具类。
+ * <p>Http 与 Servlet 相关操作工具类。</p>
  * 
  * @author Gintoki
  * @version 2017-10-05
