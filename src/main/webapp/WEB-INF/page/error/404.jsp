@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF8"
-    pageEncoding="UTF-8" isErrorPage="true"%>
+    pageEncoding="UTF-8" isErrorPage="true" isELIgnored="false"%>
 <%@ page import="cn.gin.wctf.common.web.Servlets" %>
 <jsp:include page="/WEB-INF/page/templet/Support.jsp"></jsp:include>
 <%	response.setStatus(404);%>
@@ -52,9 +52,9 @@ body {
 				<h1>请求的页面不存在</h1>
 			</div>
 			<div class="info-box" style="left: 80px;color: #666;">
-				<a href="javascript:" onclick="history.go(-1);" class="btn">返回首页</a>
+				<a href="${root}" class="btn">返回首页</a>
 				OR
-				<a href="javascript:" onclick="history.go(-1);" class="btn">返回上一页</a>
+				<a href="javascript:;" onclick="history.go(-1);" class="btn">返回上一页</a>
 			</div>
 		</div>
 	</div>

@@ -177,7 +177,7 @@
 							     	</select>
 							    </div>
 							    <div class="layui-input-inline">
-							      	<select lay-verify="required" id="chooseCounty" name="county">
+							      	<select lay-verify="required" id="chooseCountry" name="country">
 							        	<option id="defaultCountry" value="-1">区、县</option>
 							     	</select>
 							    </div>

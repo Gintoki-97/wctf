@@ -21,7 +21,7 @@
 		<result property="auth" column="auth"/>
 		<result property="reg" column="reg"/>
 	</resultMap>
-	
+
 	<sql id="updateUserSettingItems">
 		<if test="account != null">
 			`account` = #{account},
@@ -42,7 +42,7 @@
 			`salt` = #{salt},
 		</if>
 		<if test="loginFlag != null">
-			`loginFlag` = #{loginFlag},
+			`login_flag` = #{loginFlag},
 		</if>
 		<if test="sign != null">
 			`sign` = #{sign},
@@ -70,20 +70,38 @@
 		</if>
 	</sql>
 	
+	<sql id="listUserItems">
+	    login_flag != 3
+	    <if test="nickname != null">
+            and `nickname` like #{nickname},
+        </if>
+	</sql>
+	
+	<sql id="listDeleteUserItems">
+        login_flag = 3
+        <if test="nickname != null">
+            and `nickname` like #{nickname},
+        </if>
+    </sql>
+	
 	<select id="getUserById" parameterType="int" resultMap="userMapping">
 		select * from wctf_user where user_id = #{userId}
 	</select>
 	
 	<select id="getUserByIdOptional" parameterType="int" resultMap="userMapping">
-		select user_id, nickname, gender, header, address, auth, sign, weight from wctf_user where user_id = #{userId}
+		select user_id, nickname, gender, header, address, auth, sign, weight, login_flag from wctf_user where user_id = #{userId} and login_flag = 1
 	</select>
 	
 	<select id="getUserByAccount" parameterType="string" resultMap="userMapping">
-		select * from wctf_user where account = #{account}
+		select * from wctf_user where account = #{account} and login_flag = 1
 	</select>
 	
+	<select id="getUserByAccountAndPassword" resultMap="userMapping">
+        select * from wctf_user where `account` = #{0} and `password` = #{1} and login_flag = 1
+    </select>
+	
 	<select id="existsByAccount" parameterType="string" resultType="int">
-		select count(user_id) from wctf_user where account = #{account}
+		select count(user_id) from wctf_user where account = #{account} and login_flag = 1
 	</select>
 	
 	<select id="listRoleByUserId" parameterType="int" resultMap="cn.gin.wctf.module.sys.dao.RoleDao.roleMapping">
@@ -93,6 +111,36 @@
 	<select id="getPunchByUserId" parameterType="int" resultType="string">
 		select punch from wctf_user where user_id = #{userId}
 	</select>
+	
+	<select id="count" parameterType="user" resultType="int">
+        select count(1) from wctf_user 
+        <where>
+          <include refid="listUserItems"></include>
+        </where>
+    </select>
+    
+    <select id="list" parameterType="user" resultMap="userMapping">
+        select * from wctf_user 
+        <where>
+          <include refid="listUserItems"></include>
+        </where>
+        limit #{pagingStart}, #{pagingLimit}
+    </select>
+    
+    <select id="countDelete" parameterType="user" resultType="int">
+        select count(1) from wctf_user 
+        <where>
+          <include refid="listDeleteUserItems"></include>
+        </where>
+    </select>
+    
+    <select id="listDelete" parameterType="user" resultMap="userMapping">
+        select * from wctf_user 
+        <where>
+          <include refid="listDeleteUserItems"></include>
+        </where>
+        limit #{pagingStart}, #{pagingLimit}
+    </select>
 	
 	<insert id="saveUser" parameterType="user">
 		insert into wctf_user (account, nickname, email, gender, password, salt, login_flag, header, sign, birthday, reg, weight) values (#{account}, #{nickname}, #{email}, #{gender}, #{password}, #{salt}, #{loginFlag}, #{header}, #{sign}, #{birthday}, #{reg}, #{weight})
@@ -116,6 +164,10 @@
 	
 	<update id="updateUserPassword">
 		update wctf_user set password=#{1},salt=#{2} where user_id = #{0}
+	</update>
+	
+	<update id="deleteById">
+	   update wctf_user set login_flag = 3 where user_id = #{0}
 	</update>
 	
 </mapper>

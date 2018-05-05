@@ -334,7 +334,7 @@
 							<span class="layui-badge layui-bg-black">置顶</span>
 						</c:if>
 						<span class="fly-list-nums" style="color: #666;"> <a
-							href="/#comment" style="margin: 0 10px; color: #666;"> <i
+							href="${root}/post/${post.id}#PostReply" style="margin: 0 10px; color: #666;"> <i
 								class="layui-icon" title="回答">&#xe63a;</i> ${post.countReply}
 						</a> <i class="layui-icon" title="人气">&#xe756;</i> ${post.viewed}
 						</span>

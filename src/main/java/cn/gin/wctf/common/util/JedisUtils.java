@@ -67,6 +67,7 @@ public class JedisUtils {
 				logger.debug("get {} = {} from redis", key, value);
 			}
 		} catch (Exception e) {
+			jedisPool.returnBrokenResource(jedis);
 			logger.warn("get {} = {}", key, value, e);
 		} finally {
 			jedisPool.returnResource(jedis); // 归还资源
@@ -100,6 +101,7 @@ public class JedisUtils {
 				logger.debug("getList {} = {}", key, value);
 			}
 		} catch (Exception e) {
+			jedisPool.returnBrokenResource(jedis);
 			logger.warn("getList {} = {}", key, value, e);
 		} finally {
 			jedisPool.returnResource(jedis);
@@ -133,6 +135,7 @@ public class JedisUtils {
 				logger.debug("getSet {} = {}", key, value);
 			}
 		} catch (Exception e) {
+			jedisPool.returnBrokenResource(jedis);
 			logger.warn("getSet {} = {}", key, value, e);
 		} finally {
 			jedisPool.returnResource(jedis);
@@ -166,6 +169,7 @@ public class JedisUtils {
 				logger.debug("getMap {} = {}", key, value);
 			}
 		} catch (Exception e) {
+			jedisPool.returnBrokenResource(jedis);
 			logger.warn("getMap {} = {}", key, value, e);
 		} finally {
 			jedisPool.returnResource(jedis);
@@ -199,6 +203,7 @@ public class JedisUtils {
 				logger.debug("getObject {} = {}", key, value);
 			}
 		} catch (Exception e) {
+			jedisPool.returnBrokenResource(jedis);
 			logger.warn("getObject {} = {}", key, value, e);
 		} finally {
 			jedisPool.returnResource(jedis);
@@ -236,6 +241,7 @@ public class JedisUtils {
 				logger.debug("getObjectList {} = {}", key, value);
 			}
 		} catch (Exception e) {
+			jedisPool.returnBrokenResource(jedis);
 			logger.warn("getObjectList {} = {}", key, value, e);
 		} finally {
 			jedisPool.returnResource(jedis);
@@ -273,6 +279,7 @@ public class JedisUtils {
 				logger.debug("getObjectSet {} = {}", key, value);
 			}
 		} catch (Exception e) {
+			jedisPool.returnBrokenResource(jedis);
 			logger.warn("getObjectSet {} = {}", key, value, e);
 		} finally {
 			jedisPool.returnResource(jedis);
@@ -310,6 +317,7 @@ public class JedisUtils {
 				logger.debug("getObjectMap {} = {}", key, value);
 			}
 		} catch (Exception e) {
+			jedisPool.returnBrokenResource(jedis);
 			logger.warn("getObjectMap {} = {}", key, value, e);
 		} finally {
 			jedisPool.returnResource(jedis);
@@ -333,6 +341,7 @@ public class JedisUtils {
 			result = jedis.set(key, value);
 			logger.debug("set {} = {}", key, value);
 		} catch (Exception e) {
+			jedisPool.returnBrokenResource(jedis);
 			logger.warn("set {} = {}", key, value, e);
 		} finally {
 			jedisPool.returnResource(jedis);
@@ -371,6 +380,7 @@ public class JedisUtils {
 			}
 			logger.debug("set {} = {}", key, value);
 		} catch (Exception e) {
+			jedisPool.returnBrokenResource(jedis);
 			logger.warn("set {} = {}", key, value, e);
 		} finally {
 			jedisPool.returnResource(jedis);
@@ -412,6 +422,7 @@ public class JedisUtils {
 			}
 			logger.debug("setList {} = {}", key, value);
 		} catch (Exception e) {
+			jedisPool.returnBrokenResource(jedis);
 			logger.warn("setList {} = {}", key, value, e);
 		} finally {
 			jedisPool.returnResource(jedis);
@@ -453,6 +464,7 @@ public class JedisUtils {
 			}
 			logger.debug("setSet {} = {}", key, value);
 		} catch (Exception e) {
+			jedisPool.returnBrokenResource(jedis);
 			logger.warn("setSet {} = {}", key, value, e);
 		} finally {
 			jedisPool.returnResource(jedis);
@@ -495,6 +507,7 @@ public class JedisUtils {
 				}
 				logger.debug("setMap {} = {}", key, value);
 			} catch (Exception e) {
+				jedisPool.returnBrokenResource(jedis);
 				logger.warn("setMap {} = {}", key, value, e);
 			} finally {
 				jedisPool.returnResource(jedis);
@@ -535,6 +548,7 @@ public class JedisUtils {
 			}
 			logger.debug("setObject {} = {}", key, value);
 		} catch (Exception e) {
+			jedisPool.returnBrokenResource(jedis);
 			logger.warn("setObject {} = {}", key, value, e);
 		} finally {
 			jedisPool.returnResource(jedis);
@@ -580,6 +594,7 @@ public class JedisUtils {
 			}
 			logger.debug("setObjectList {} = {}", key, value);
 		} catch (Exception e) {
+			jedisPool.returnBrokenResource(jedis);
 			logger.warn("setObjectList {} = {}", key, value, e);
 		} finally {
 			jedisPool.returnResource(jedis);
@@ -625,6 +640,7 @@ public class JedisUtils {
 			}
 			logger.debug("setObjectSet {} = {}", key, value);
 		} catch (Exception e) {
+			jedisPool.returnBrokenResource(jedis);
 			logger.warn("setObjectSet {} = {}", key, value, e);
 		} finally {
 			jedisPool.returnResource(jedis);
@@ -670,6 +686,7 @@ public class JedisUtils {
 			}
 			logger.debug("setObjectMap {} = {}", key, value);
 		} catch (Exception e) {
+			jedisPool.returnBrokenResource(jedis);
 			logger.warn("setObjectMap {} = {}", key, value, e);
 		} finally {
 			jedisPool.returnResource(jedis);
@@ -704,6 +721,7 @@ public class JedisUtils {
 				logger.debug("del {} not exists", key);
 			}
 		} catch (Exception e) {
+			jedisPool.returnBrokenResource(jedis);
 			logger.warn("del {}", key, e);
 		} finally {
 			jedisPool.returnResource(jedis);
@@ -725,6 +743,7 @@ public class JedisUtils {
 			result = jedis.hdel(key, mapKey);
 			logger.debug("mapRemove {}  {}", key, mapKey);
 		} catch (Exception e) {
+			jedisPool.returnBrokenResource(jedis);
 			logger.warn("mapRemove {}  {}", key, mapKey, e);
 		} finally {
 			jedisPool.returnResource(jedis);
@@ -743,8 +762,8 @@ public class JedisUtils {
 		try {
 			jedis = jedisPool.getResource();
 		} catch (JedisException e) {
-			logger.warn("getResource()", e);
 			jedisPool.returnBrokenResource(jedis);
+			logger.warn("getResource()", e);
 			throw e;
 		}
 		return jedis;

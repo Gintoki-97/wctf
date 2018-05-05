@@ -26,42 +26,42 @@ import cn.gin.wctf.module.sys.service.UserService;
 
 /**
  * <p>发贴业务类</p>
- * 
+ *
  * @author Gintoki
  * @version 2017-10-03
  */
 @Service
 public class PostService {
-	
+
 	@Autowired
 	private SystemService systemService;
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private TrendService trendService;
-	
+
 	@Autowired
 	private ReplyService replyService;
-	
+
 	@Autowired
 	private SlReplyService slReplyService;
-	
+
 	@Autowired
 	private PostDao postDao;
-	
+
 	@Autowired
 	private AnsyTaskManager ansyTaskManager;
-	
+
 	// ----------------------------
 	// Service
-	// ----------------------------	
-	
+	// ----------------------------
+
 	/**
 	 * <p>预处理首页发贴数据列表。从 EhCache 中获取，如果缓存中没有，从 Redis 中获取；如果还是没有就从数据库中获取。
 	 * 如果客户端需要进行分页，会直接从数据库中查询，因为缓存中只存储首页默认的数据。</p>
-	 * 
+	 *
 	 * @param paging - 分页对象，如果为 null 表示不需要分页
 	 * @return 首页发贴数据列表
 	 */
@@ -70,13 +70,13 @@ public class PostService {
 		Map<String, List<Post>> indexData = null;
 		List<Post> tops = null;
 		List<Post> posts = null;
-		if(paging == null) {	// 当前是首页，不需要分页
+		if (paging == null) {	// 当前是首页，不需要分页
 			// 从一级缓存（Ehcache）中获取
 			tops = (List<Post>) CacheUtils.get(CacheUtils.POST_CACHE, "indexTops");
-			if(tops == null || tops.size() != 3) {
+			if (tops == null || tops.size() != 3) {
 				// 从二级缓存（Redis）中获取
 				tops = (List<Post>) JedisUtils.getObject("indexTops", RedisIndex.POST_CACHE);
-				if(tops == null || tops.size() != 3) {
+				if (tops == null || tops.size() != 3) {
 					// 从数据库中获取，并更新一级缓存和二级缓存
 					tops = postsWrapper(postDao.listTopLazing(3));
 					CacheUtils.put(CacheUtils.POST_CACHE, "indexTops", tops);
@@ -87,10 +87,10 @@ public class PostService {
 				}
 			}
 			posts = (List<Post>) CacheUtils.get(CacheUtils.POST_CACHE, "indexPosts");
-			if(posts == null || posts.size() != 10) {
+			if (posts == null || posts.size() != 10) {
 				// 从二级缓存（Redis）中获取
 				posts = (List<Post>) JedisUtils.getObject("indexPosts", RedisIndex.POST_CACHE);
-				if(posts == null || posts.size() != 10) {
+				if (posts == null || posts.size() != 10) {
 					// 从数据库中获取，并更新一级缓存和二级缓存
 					posts = postsWrapper(postDao.listPostLazing(0, 10));
 					CacheUtils.put(CacheUtils.POST_CACHE, "indexPosts", posts);
@@ -116,10 +116,10 @@ public class PostService {
 		}
 		return indexData;
 	}
-	
+
 	/**
 	 * <p>用户发贴，用户在发贴页面提交发帖表单，会触发对此业务方法的调用。</p>
-	 * 
+	 *
 	 * @param data - 应用数据流载体
 	 * @param data$User$login - 当前 Session 中登录的用户
 	 * @param data$Post$post - 页面传入的发贴信息的封装
@@ -135,13 +135,13 @@ public class PostService {
 			data.setMsg("数据准备异常");
 			data.clearParams();
 			return;
-		} 
+		}
 		post.setTop(0);
 		post.setViewed(0);
 		post.setClose(0);
 		post.setUserId(login.getId());
 		post.setPostTime(new Date());
-		if(postDao.savePost(post) == 1) {
+		if (postDao.savePost(post) == 1) {
 			data.setStatus(300);
 			data.setMsg("发贴成功");
 			// 强制缓存失效
@@ -165,14 +165,14 @@ public class PostService {
 
 	/**
 	 * <p>获取指定分类的所有发贴，用户在首页或分类查看发贴页面进行查看指定类型的发贴请求时，会请求此控制器方法处理。</p>
-	 * 
+	 *
 	 * @param classify - 指定分类
 	 * @param index - 分页对象，如果为 null 表示不需要分页
 	 * @return 指定分类的所有发贴
 	 */
 	public Page<Post> listPostByClassify(String classify, Integer index) {
 		Page<Post> paging = new Page<Post>();
-		if(index == null || index <= 1) {
+		if (index == null || index <= 1) {
 			paging.setIndex(1);
 		} else {
 			paging.setIndex(index);
@@ -194,10 +194,10 @@ public class PostService {
 		paging.setList(posts);
 		return paging;
 	}
-	
+
 	/**
 	 * <p>收藏指定发贴 ID 对应的发贴，会触发对此业务方法的调用。</p>
-	 * 
+	 *
 	 * @param data - 应用数据流载体
 	 * @param data$Integer$userId - 用户传入的发起收藏请求的用户 ID，即当前进行操作的用户
 	 * @param data$Integer$postId - 用户传入的被收藏的发贴 ID
@@ -208,7 +208,7 @@ public class PostService {
 		try {
 			userId = data.getParameter("userId");
 			postId = data.getParameter("postId");
-			if(userId == 0 || postId == 0) {
+			if (userId == 0 || postId == 0) {
 				throw new IllegalArgumentException();
 			}
 		} catch(Exception e) {
@@ -218,11 +218,11 @@ public class PostService {
 			return;
 		}
 		List<Integer> users = postDao.listCollect(postId);
-		if(users.contains(userId)) {
+		if (users.contains(userId)) {
 			data.setStatus(373);
 			data.setMsg("已经收藏过了~");
 		} else {
-			if(postDao.saveCollect(userId, postId) == 1) {
+			if (postDao.saveCollect(userId, postId) == 1) {
 				data.setStatus(370);
 				data.setMsg("收藏成功");
 			} else {
@@ -232,14 +232,14 @@ public class PostService {
 		}
 		data.clearParams();
 	}
-	
+
 	// ------------------------
 	// Support
 	// ------------------------
-	
+
 	/**
 	 * <p>格式化发贴分类信息，用于页面和数据库之间的数据格式转换。</p>
-	 * 
+	 *
 	 * @param classify - 页面传入的发贴分类分类字符串
 	 * @return 指定发贴分类对应整型（数据库中存储格式为 TINYINT）
 	 */
@@ -263,12 +263,12 @@ public class PostService {
 
 	/**
 	 * <p>根据发贴 ID 加载指定发贴的所有信息，同时会级联查询所有回贴及二级回贴信息。</p>
-	 * 
+	 *
 	 * @param postId - 发贴 ID
 	 * @return 指定发贴的所有信息封装
 	 */
 	public Post getPostById(Integer postId) {
-		if(postId != null && postId > 0) {
+		if (postId != null && postId > 0) {
 			Post post = postDao.getPostById(postId);
 			User login = systemService.getLogin();
 			Integer userId = login == null ? 0 : login.getId() == null ? 0 : login.getId();
@@ -285,7 +285,7 @@ public class PostService {
 				}
 				List<Integer> users = replyService.listThumb(reply.getId());
 				// 设置
-				if(users.contains(userId)) {
+				if (users.contains(userId)) {
 					reply.setThumbed(1);
 				} else {
 					reply.setThumbed(0);
@@ -294,7 +294,7 @@ public class PostService {
 			}
 			// 设置收藏
 			List<Integer> users = postDao.listCollect(postId);
-			if(users.contains(userId)) {
+			if (users.contains(userId)) {
 				post.setCollect(true);
 			} else {
 				post.setCollect(false);
@@ -304,15 +304,15 @@ public class PostService {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * <p>根据发贴 ID 懒加载指定发贴的所有信息和发贴用户信息，对于回贴信息不会进行关联查询。</p>
-	 * 
+	 *
 	 * @param postId - 发贴 ID
 	 * @return 指定发贴的所有信息封装，不包括关联查询
 	 */
 	public Post getPostByIdLazing(Integer postId) {
-		if(postId != null && postId > 0) {
+		if (postId != null && postId > 0) {
 			Post post = postDao.getPostById(postId);
 			// 更新用户信息
 			post.setUser(userService.getUserById(post.getUserId()));
@@ -324,22 +324,22 @@ public class PostService {
 
 	/**
 	 * <p>浏览指定发贴时，自动更新该发贴的浏览量</p>
-	 * 
+	 *
 	 * @param id - 需要更新的发贴的 ID
 	 * @return 是否更新成功
 	 */
 	public boolean updateViewed(Integer id) {
 		return postDao.updateViewedByPostId(id) == 1;
 	}
-	
-	
+
+
 	// ----------------------------
 	// Private
 	// ----------------------------
-	
+
 	/**
 	 * <p>批量为发帖对象填充依赖信息</p>
-	 * 
+	 *
 	 * @param posts - 需要被填充的发贴列表
 	 * @return 填充后的发贴列表
 	 */
@@ -350,5 +350,5 @@ public class PostService {
 		}
 		return posts;
 	}
-	
+
 }

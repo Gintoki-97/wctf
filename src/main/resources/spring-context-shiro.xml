@@ -88,12 +88,22 @@
 		<constructor-arg>
 			<value>
 				<!-- 匿名访问：首页、静态资源、公共接口、用户注册、发帖查询 -->
+				<!-- Shiro 配置备份 ################# START
+				/** = anon
+				${web.root.user}/login = authc
+				${web.root.user}/logout = logout
+				${web.root.user}/** = authc
+				/post/send = authc
+				Shiro 配置备份 ################# -->
 				/ = anon
 				/index** = anon
 				/static/** = anon
 				/common/** = anon
+				<!-- 管理员模块由自定义拦截器校验  -->
+				/admin** = anon
+				/admin/** = anon
 				${web.root.user}/reg** = anon
-				<!-- 验证访问 -->
+				<!-- 验证访问  -->
 				${web.root.user}/login = authc
 				${web.root.user}/logout = logout
 				${web.root.user}/** = authc

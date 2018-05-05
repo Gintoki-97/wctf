@@ -70,7 +70,7 @@
 								<div class="layui-col-md9">
 									<label class="layui-form-label">标题</label>
 									<div class="layui-input-block">
-										<input type="text" name="title" lay-verify="pos_ti" autocomplete="off" class="layui-input">
+										<input type="text" name="title" autocomplete="off" class="layui-input">
 									</div>
 								</div>
 							</div>

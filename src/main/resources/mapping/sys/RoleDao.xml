@@ -11,7 +11,7 @@
 		select * from wctf_role where role_id = #{roleId}
 	</select>
 	
-	<select id="getRoleByUserIdId" parameterType="int" resultMap="roleMapping">
+	<select id="getRolesByUserIdId" parameterType="int" resultMap="roleMapping">
 		select l.* from wctf_role l right outer join (select * from wctf_user_role where user_id = #{userId}) r on l.role_id = r.role_id
 	</select>
 	

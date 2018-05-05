@@ -15,6 +15,13 @@
 		<function-class>cn.gin.wctf.module.sys.service.SystemService</function-class>
 		<function-signature>java.lang.Boolean isPunchToday(java.lang.String)</function-signature>
 	</function>
+	
+	<function>
+		<description>获取应用的全局配置属性</description>
+		<name>getConfig</name>
+		<function-class>cn.gin.wctf.common.config.Global</function-class>
+		<function-signature>java.lang.String getConfig(java.lang.String)</function-signature>
+	</function>
 
 </taglib>
 					

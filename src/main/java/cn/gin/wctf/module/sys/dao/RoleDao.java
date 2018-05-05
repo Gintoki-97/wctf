@@ -25,6 +25,6 @@ public interface RoleDao {
 	 * @param userId - 指定的用户 ID
 	 * @return 指定 ID 对应的用户的角色列表
 	 */
-	List<Role> getRoleByUserIdId(Integer userId);
+	List<Role> getRolesByUserIdId(Integer userId);
 
 }

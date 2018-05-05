@@ -5,11 +5,9 @@ import java.util.Date;
 import java.util.List;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Range;
 
-import cn.gin.wctf.common.config.Global;
 import cn.gin.wctf.common.util.StringUtils;
 import cn.gin.wctf.common.validator.post.PostSendGroup;
 import cn.gin.wctf.module.sys.entity.Trend;
@@ -24,47 +22,47 @@ import cn.gin.wctf.module.sys.entity.User;
 public class Post implements Serializable, TrendSupport {
 
 	private static final long serialVersionUID = -5628371592572770658L;
-	
+
 	/*
 	 * DO
 	 * */
 	private Integer id;			// 唯一键
-	
+
 	@Min(value = 1, groups = PostSendGroup.class)
 	private Integer userId;		// 发送者id，用于延迟加载
-	
-	@Pattern(regexp = PostSendGroup.TITLE, groups = PostSendGroup.class, message = "{post.send.title}")
+
+//	@Pattern(regexp = PostSendGroup.TITLE, groups = PostSendGroup.class, message = "{post.send.title}")
 	private String title;		// 标题
 	private Date postTime;		// 发送时间
 	private Integer viewed;		// 浏览量
 	private Integer top;		// 热搜排序点
 	private Integer close;		// 是否封贴
-	
+
 	@Range(min = 1, max = 5, groups = PostSendGroup.class, message = "{post.send.classify}")
 	private Integer classify;	// 帖子分类
-	
-	@Pattern(regexp = PostSendGroup.CONTENT, groups = PostSendGroup.class, message = "{post.send.content}")
+
+//	@Pattern(regexp = PostSendGroup.CONTENT, groups = PostSendGroup.class, message = "{post.send.content}")
 	private String content;		// 内容
-	
+
 	/*
 	 * VO
 	 */
 	private boolean collect;	// 是否收藏
-	private String classifyStr;	// 用于显示到首页的分类 
+	private String classifyStr;	// 用于显示到首页的分类
 	private Integer countReply;	// 回帖数
-	
+
 	/*
 	 * Support
 	 */
 	private User user;			// 发送者
 	private List<Reply> replys;	// 回帖列表
-	
+
 	// Query
 	private Integer start;
 	private Integer limit;
-	
+
 	public Post() {}
-	
+
 	public Integer getId() {
 		return id;
 	}
@@ -219,16 +217,22 @@ public class Post implements Serializable, TrendSupport {
 			return false;
 		return true;
 	}
-	
+
 	// ---------------------------
 
 	@Override
 	public Trend buildTrend() {
 		int i = (classify <= 1 && classify <= 5) ? classify : 0;
-		String postUrl = Global.getConfig("web.root.uri") + "/post/" + id;
-		String postImgUrl = Global.getConfig("web.server") + "/static/image/post_" + i + ".jpg";
+//		TODO Test => There is updated at 2018-05-02 11:19:00.
+//		String postUrl = Global.getConfig("web.root.uri") + "/post/" + id;
+		String postUrl = "post/" + id;
+//      TODO Test => There is updated at 2018-05-02 11:20:00.
+//		String postImgUrl = Global.getConfig("web.server") + "/static/image/post_" + i + ".jpg";
+		String postImgUrl = "static/image/post_" + i + ".jpg";
 		String cls = StringUtils.EMPTY;
-		String tagLink = Global.getConfig("web.root.uri") + "/post/";
+//      TODO Test => There is updated at 2018-05-02 11:20:00.
+//		String tagLink = Global.getConfig("web.root.uri") + "/post/";
+		String tagLink = "post/";
 		switch(classify) {
 		case 1:
 			cls = "发起了讨论";
@@ -252,7 +256,7 @@ public class Post implements Serializable, TrendSupport {
 			break;
 		default:
 			cls = "发表了新贴";
-			tagLink = Global.getConfig("web.root.uri") + "/index";
+			tagLink = "index";
 			break;
 		}
 		try {
@@ -261,9 +265,11 @@ public class Post implements Serializable, TrendSupport {
 			e.printStackTrace();
 			try {
 				return new Trend.Builder(userId, cls, title, postTime.getTime(), postUrl, postImgUrl).build();
-			} catch(Exception ex) {ex.printStackTrace();}
+			} catch(Exception ex) {
+			    // There occurred some errors when cast the post object to trend object.
+			    throw new RuntimeException(ex);
+			}
 		}
-		return null;
 	}
-	
+
 }

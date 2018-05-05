@@ -97,9 +97,9 @@
 			set_pw: [/^[\w_-]{6,16}$/, '密码不正确'],
 			set_np: [/^[\w_-]{6,16}$/, '密码格式不正确'],
 			pos_cl: [/^[\S]+$/, '请选择发帖分类'],
-			pos_ti: [/^[\S]{1,50}$/, '标题长度为1~50个字符'],
-			pos_co: [/^[\S]{1,50000}$/, '内容长度为1~50000个字符'],
-			pos_ca: [/^[\w]{4}$/, '验证码错误']
+			pos_ti: [/[\S]{1,50}/, '标题长度为1~50个字符'],
+			pos_co: [/[\S]{1,50000}/, '内容长度为1~50000个字符'],
+			pos_ca: [/[\w]{4}/, '验证码错误']
 		});
 		
 		// -----------------------
@@ -200,7 +200,7 @@
 						$("#capt").val("");
 						$("#image-validate").attr("src", "common/captcha" + Global.url_stamp_date);
 						// 回显邮箱账号和域名
-						if(resp.param.account != null) {
+						if(!isEmpty(resp.param.account)) {
 							var email = resp.param.account.split("@")[0];
 							var domain = resp.param.account.split("@")[1];
 							$("#email").val(email);
@@ -250,13 +250,20 @@
 			// 2.3 layui 修改信息表单提交
 			// -----------------------
 		form.on('submit(UserSetting)', function(data) {
-			if(Global.user == "") {
+			if(isEmpty(Global.user)) {
 				Global.user = $("#userId").val()
-				if(Global.user == "") {
-					layer.msg('您还未登录~');
+				if(isEmpty(Global.user)) {
+					layer.msg("您还未登录 ~", {offset: '280px'});
 					return false;
 				}
 			}
+			// 手动校验部分字段
+			$.each([data.field.province, data.field.province, data.field.province], function(index, val) {
+				if(!isEmpty(val) && val == "-1") {
+					layer.msg("请选择" + index == 0 ? "省份" : index == 1 ? "城市" : "区/县", {offset: '280px'});
+					return false;
+				}
+			});
 			var url = base + Global.user_setting + "/" + Global.user;
 			$.ajax({
 				url: url,
@@ -280,7 +287,7 @@
 				},
 				/**
 				 * 1. Please check whether the request address is legal.
-				 * 2. Please check whether the dataType is json.			// resolved
+				 * 2. Please check whether the dataType is json.			// Resolved
 				 * */
 				error: function(XMLHttpRequest, textStatus, errorThrown) {
 					layer.open({
@@ -295,10 +302,10 @@
 			// 2.4 layui 重置密码表单提交
 			// -----------------------
 		form.on('submit(UserReset)', function(data) {
-			if(Global.user == "") {
+			if(isEmpty(Global.user)) {
 				Global.user = $("#userId").val()
-				if(Global.user == "") {
-					layer.msg('您还未登录~');
+				if(isEmpty(Global.user)) {
+					layer.msg("您还未登录 ~", {offset: '280px'});
 					return false;
 				}
 			}
@@ -350,10 +357,10 @@
 			// 2.5 layui 发贴表单提交
 			// -----------------------
 		form.on('submit(PostSend)', function(data) {
-			if(Global.user == "") {
+			if(isEmpty(Global.user)) {
 				Global.user = $("#userId").val()
-				if(Global.user == "") {
-					layer.msg('您还未登录~');
+				if(isEmpty(Global.user)) {
+					layer.msg("您还未登录 ~", {offset: '280px'});
 					return false;
 				}
 			}
@@ -407,21 +414,21 @@
 			// 2.6 layui 发贴回复表单提交
 			// -----------------------
 		form.on('submit(PostReply)', function(data) {
-			if(Global.user == "") {
+			if(isEmpty(Global.user)) {
 				Global.user = $("#userId").val()
-				if(Global.user == "") {
-					layer.msg('您还未登录~');
+				if(isEmpty(Global.user)) {
+					layer.msg("您还未登录 ~", {offset: '280px'});
 					return false;
 				}
 			}
 			// 同步编辑器的内容
 			var content = layedit.getContent(replyEditor);
 			if(content.length <= 0) {
-				layer.msg('回复内容不能为空', {icon: 5});
+				layer.msg('回复内容不能为空', {icon: 5, offset: '280px'});
 				return false;
 			}
 			if(content.length > 5000) {
-				layer.msg('回复内容过长', {icon: 5});
+				layer.msg('回复内容过长', {icon: 5, offset: '280px'});
 				return false;
 			}
 			var url = base + Global.post_reply;
@@ -432,7 +439,7 @@
 				scriptCharset: "utf-8",
 				data: {
 					userId: Global.user,
-					postId: data.field.replyId,
+					postId: data.field.postId,
 					content: content
 				},
 				success: function(resp) {
@@ -462,21 +469,21 @@
 			// 2.6 layui 发贴回复表单提交
 			// -----------------------
 		form.on('submit(SlReply)', function(data) {
-			if(Global.user == "") {
+			if(isEmpty(Global.user)) {
 				Global.user = $("#userId").val()
-				if(Global.user == "") {
-					layer.msg('您还未登录~');
+				if(isEmpty(Global.user)) {
+					layer.msg("您还未登录 ~", {offset: '280px'});
 					return false;
 				}
 			}
 			// 同步编辑器的内容
 			var content = layedit.getContent(slreplyEditor);
 			if(content.length <= 0) {
-				layer.msg('回复内容不能为空', {icon: 5});
+				layer.msg('回复内容不能为空', {icon: 5, offset: '280px'});
 				return false;
 			}
 			if(content.length > 200) {
-				layer.msg('回复内容过长', {icon: 5});
+				layer.msg('回复内容过长', {icon: 5, offset: '280px'});
 				return false;
 			}
 			var replyId = $("#sleditor").parent().attr("data-li");
@@ -531,13 +538,15 @@
 				if(resp.success) {
 					//上传成功，更新用户头像
 					layer.msg(resp.msg, {
-			    		icon: 1
+			    		icon: 1, 
+			    		offset: '280px'
 			    	});
 					$("#viewAvatar").attr("src", resp.param.url);
 					$("#reviewAvatar").attr("src", resp.param.url);
 				} else {
 					layer.msg(resp.msg, {
-			    		icon: 5
+			    		icon: 5, 
+			    		offset: '280px'
 			    	});
 				}
 			},
@@ -545,7 +554,8 @@
 		    	//请求异常回调
 		    	layer.closeAll('loading');
 		    	layer.msg('请求失败，请稍后再试', {
-		    		icon: 5
+		    		icon: 5,
+		    		offset: '280px'
 		    	});
 			}
 		});
@@ -559,8 +569,8 @@
 			theme: 'molv',					// 墨绿主题
 			format: 'yyyy年MM月dd日', 		// 日期格式
 			value: ($("#userSettingBirth").attr("data-bi") == null || $("#userSettingBirth").attr("data-bi") == '') ? new Date() : new Date(parseInt($("#userSettingBirth").attr("data-bi"))),
-			change: function(value, date, endDate) {
-				var mills = date.getTime();
+			done: function(value, date, endDate) {
+				var mills = isNaN(date.year) ? 0 : new Date(date.year, date.month - 1, date.date).getTime();
 				$("#userSettingBirth").attr("data-bi", mills);
 			}
 		});
@@ -675,18 +685,10 @@
 		// 8.1 省联动市
 		// -----------------------
 		form.on('select(choosePro)', function(data) {
-			var chooseCity = $("#chooseCity");
-			var chooseCounty = $("#chooseCounty");
-			if (chooseCity.children().length > 1)
-				chooseCity.empty();
-			if (chooseCounty.children().length > 1)
-				chooseCounty.empty();
-			if ($("#defaultCity").length == 0) {
-				chooseCity.append("<option id='defaultCity' value='-1'>城市</option>");
-			}
-			if ($("#defaultCountry").length == 0) {
-				chooseCounty.append("<option id='defaultCountry' value='-1'>区/县</option>");
-			}
+			$("#chooseCity").empty();
+			$("#chooseCity").append("<option id='defaultCity' value='-1' selected='selected'>城市</option>");
+			$("#chooseCountry").empty();
+			$("#chooseCountry").append("<option id='defaultCountry' value='-1' selected='selected'>区/县</option>");
 			var sb = new StringBuffer();
 			$.each(cityJson, function(i, val) {
 				if (val.item_code.substr(0, 2) == $("#choosePro").val().substr(0, 2) 
@@ -703,12 +705,8 @@
 		// -----------------------
 		form.on('select(chooseCity)', function(data) {
 			var chooseCityVal = data.value;
-			var chooseCountry = $("#chooseCountry");
-			if (chooseCountry.children().length > 1)
-				chooseCountry.empty();
-			if ($("#defaultCountry").length == 0) {
-				chooseCountry.append("<option id='defaultCountry' value='-1'>区/县</option>");
-			}
+			$("#chooseCountry").empty();
+			$("#chooseCountry").append("<option id='defaultCountry' value='-1' selected='selected'>区/县</option>");
 			var sb = new StringBuffer();
 			$.each(cityJson, function(i, val) {
 				if (chooseCityVal == '110100' || chooseCityVal == "120100" || chooseCityVal == "310100" || chooseCityVal == "500100") {
@@ -738,10 +736,10 @@
 		// 10. 签到
 		// -----------------------
 		$("#punch").on("click", function() {
-			if(Global.user == "") {
+			if(isEmpty(Global.user)) {
 				Global.user = $("#userId").val()
-				if(Global.user == "") {
-					layer.msg('您还未登录~');
+				if(isEmpty(Global.user)) {
+					layer.msg("您还未登录 ~", {offset: '280px'});
 					return false;
 				}
 			}
@@ -761,7 +759,7 @@
 						//if(resp.match("<title>Gintoki - 用户登录</title>"))
 					} else {
 						// 签到成功
-						layer.msg('签到成功，+ 20 斤', {icon: 1});
+						layer.msg('签到成功，+ 20 斤', {icon: 1, offset: '280px'});
 						$("#punch").css("display", "none");
 						$("#punch").before('<a><li class="l1 btn"><i class="layui-icon">&#xe605;</i><span>已签到</span></li></a>');
 						$("#punch").remove();
@@ -807,13 +805,16 @@
 					}
 				});
 				$("#defaultCountry").after(sb.toString());
-				$("#chooseCounty").val(address);
+				$("#chooseCountry").val(address);
 				form.render('select');
 				layer.close(index);
 			} else {
 				$.ajax({
 					url: Global.util_loc,
 					type: "GET",
+					headers: {
+						"Access-Control-Allow-Origin" : "*"
+					},
 					success: function(resp) {
 						if(resp.success) {
 							address = resp.param.location;
@@ -838,7 +839,7 @@
 								}
 							});
 							$("#defaultCountry").after(sb.toString());
-							$("#chooseCounty").val(address);
+							$("#chooseCountry").val(address);
 							form.render('select');
 						} else {
 							layer.open({
@@ -868,10 +869,10 @@
 			// 12.1 layui 收藏发贴
 			// -----------------------
 		$(".post .collect").on("click", function() {
-			if(Global.user == "") {
+			if(isEmpty(Global.user)) {
 				Global.user = $("#userId").val()
-				if(Global.user == "") {
-					layer.msg('您还未登录~');
+				if(isEmpty(Global.user)) {
+					layer.msg("您还未登录 ~", {offset: '280px'});
 					return;
 				}
 			}
@@ -903,10 +904,10 @@
 			// 12.2 layui 回贴点赞
 			// -----------------------
 		$(".reply .reply-info .thumb").on("click", function() {
-			if(Global.user == "") {
+			if(isEmpty(Global.user)) {
 				Global.user = $("#userId").val()
-				if(Global.user == "") {
-					layer.msg('您还未登录~');
+				if(isEmpty(Global.user)) {
+					layer.msg("您还未登录 ~", {offset: '280px'});
 					return;
 				}
 			}
@@ -941,10 +942,10 @@
 			// 12.3 layui 回贴回复
 			// -----------------------
 		$(".reply .reply-info .slreply").on("click", function(event) {
-			if(Global.user == "") {
+			if(isEmpty(Global.user)) {
 				Global.user = $("#userId").val();
-				if(Global.user == "") {
-					layer.msg('您还未登录~');
+				if(isEmpty(Global.user)) {
+					layer.msg("您还未登录 ~", {offset: '280px'});
 					return;
 				}
 			}
@@ -1036,6 +1037,7 @@
 					type: 1,
 					shade: .3,
 					area: "640px",
+					offset: '160px',
 					resize:false,
 					title: false,
 					content: $('.dynamic-setting-panel')
@@ -1091,7 +1093,7 @@
 							url: base + "user/" + userPageId,
 							type: "POST",
 							success: function(resp) {
-								var templet = '<li class="item layui-clear"><div class="header"><img alt=""src="#{trend.header}"style="width: 100%; border-radius: 100%;"></div><div class="content"><div class="head"><div class="name"><a class=""href="#{root}/user/#{trend.userId}">#{trend.nickname}</a></div><div class="time">#{trend.time}</div><div class="title">#{trend.classify}</div></div><div class="body"><a class="fl"href="#{root}/#{trend.link}"><img src="#{server}/#{trend.imgLink}"width="40"height="40"></a><div class="detail"><div class="tag"><span>来自</span><a href="#{root}/#{trend.tagLink}"target="_blank"><span class="ml10" style="color: #666;">#{trend.tag}</span></a></div><div class="subtitle"><a href="#{trend.link}"> #{trend.title} </a></div></div></div><hr></div></li>';
+								var templet = '<li class="item layui-clear"><div class="header"><img alt=""src="#{server}/#{trend.header}"style="width: 100%; border-radius: 100%;"></div><div class="content"><div class="head"><div class="name"><a class=""href="#{root}/user/#{trend.userId}">#{trend.nickname}</a></div><div class="time">#{trend.time}</div><div class="title">#{trend.classify}</div></div><div class="body"><a class="fl"href="#{root}/#{trend.link}"><img src="#{server}/#{trend.imgLink}"width="40"height="40"></a><div class="detail"><div class="tag"><span>来自</span><a href="#{root}/#{trend.tagLink}"target="_blank"><span class="ml10" style="color: #666;">#{trend.tag}</span></a></div><div class="subtitle"><a href="#{trend.link}"> #{trend.title} </a></div></div></div><hr></div></li>';
 								layui.each(resp.param.trends, function(index, item) {
 									var s = templet;
 									var time = util.timeAgo(new Date(item.time), true);
@@ -1154,6 +1156,12 @@
 			var email = $("#email").val();
 			if(!email.match(/[a-zA-Z0-9_-]+/)) {
 				layer.tips('邮箱格式不正确', '#email', {
+					tips: 1
+				});
+				return;
+			}
+			if (email.indexOf("@") != -1) {
+				layer.tips('请不要在邮箱中包含域名', '#email', {
 					tips: 1
 				});
 				return;
@@ -1442,10 +1450,10 @@
 				qrcode.makeCode(text);
 				// 文件下载按钮
 				$("#ResDetailDownload").on("click", function() {
-					if(Global.user == "") {
+					if(isEmpty(Global.user)) {
 						Global.user = $("#userId").val();
-						if(Global.user == "") {
-							layer.msg('您还未登录~');
+						if(isEmpty(Global.user)) {
+							layer.msg("您还未登录 ~", {offset: '280px'});
 							return;
 						}
 					}

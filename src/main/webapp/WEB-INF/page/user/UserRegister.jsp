@@ -69,6 +69,7 @@
 										<option value="qq.com">qq.com</option>
 										<option value="126.com">126.com</option>
 										<option value="163.com">163.com</option>
+										<option value="163.com">189.com</option>
 										<option value="sohu.com">sohu.com</option>
 										<option value="sina.com">sina.com</option>
 										<option value="yahoo.com">yahoo.com</option>
@@ -83,7 +84,7 @@
 									<input type="text" id="captcha" name="emailCaptcha" lay-verify="reg_ca" autocomplete="off" class="layui-input" placeholder="请输入邮箱验证码" value="">
 								</div>
 								<div class="layui-input-inline">
-									<span id="send-email-cover" class="layui-btn" style="width: 106px;position: absolute;z-index: 99;left: 10px;opacity: 0;display: none;cursor: not-allowed;"></span>
+									<span id="send-email-cover" class="layui-btn" style="width: 135px;position: absolute;z-index: 99;left: 10px;opacity: 0;display: none;cursor: not-allowed;"></span>
 									<span id="send-email" class="layui-btn">发送验证码</span>
 								</div>
 							</div>

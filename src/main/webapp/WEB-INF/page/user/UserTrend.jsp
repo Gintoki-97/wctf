@@ -118,7 +118,7 @@ body {
 	position: relative;
     left: 30px;
 	width: 40px;
-	height: 100%;
+	height: 40%;
 	float: left;
 }
 .activities .item .content {

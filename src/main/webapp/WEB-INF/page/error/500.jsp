@@ -97,7 +97,7 @@ div::-webkit-scrollbar-thumb {
 	<div id="main" class="container-fluid">
 		<div class="container">
 			<div class="page-header">
-				<h1>系统内部错误</h1>
+				<h1>500.系统内部错误</h1>
 			</div>
 			<div class="ctrl">
 				<div class="desc">
@@ -107,9 +107,9 @@ div::-webkit-scrollbar-thumb {
 				<div class="tips">
 					<p>请点击“查看详细信息”按钮，将详细错误信息发送给系统管理员，谢谢！</p>
 					<div style="display: inline-block;position: relative;left: 260px;color: #666;">
-						<a href="javascript:" onclick="history.go(-1);" class="btn val">返回上一页</a>
+						<a href="javascript:;" onclick="history.go(-1);" class="btn val">返回上一页</a>
 						OR
-						<a href="javascript:" onclick="$('.error-msg').toggle();" class="btn val">查看详细信息</a>
+						<a href="javascript:;" onclick="$('.error-msg').toggle();" class="btn val">查看详细信息</a>
 					</div>
 				</div>
 			</div>
@@ -120,9 +120,9 @@ div::-webkit-scrollbar-thumb {
 				<code style="font-size: 11px;">
 				<%=StringUtils.toHtml(sb.toString())%>
 				</code><br>
-				<a href="javascript:" onclick="history.go(-1);" class="btn">返回上一页</a>
+				<a href="javascript:;" onclick="history.go(-1);" class="btn">返回上一页</a>
 				&nbsp; 
-				<a href="javascript:" onclick="$('.error-msg').toggle();" class="btn">隐藏详细信息</a><br><br>
+				<a href="javascript:;" onclick="$('.error-msg').toggle();" class="btn">隐藏详细信息</a><br><br>
 			</div>
 		</div>
 	</div>

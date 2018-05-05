@@ -3,6 +3,14 @@
 body {
 	background-color: #f8f8f8;
 }
+
+input:-webkit-autofill, textarea:-webkit-autofill { 
+    -webkit-box-shadow: 0 0 0 1000px white inset; 
+}
+input[type=text]:focus, input[type=password]:focus, textarea:focus {
+    -webkit-box-shadow: 0 0 0 1000px white inset; 
+}
+
 .main {
 	width: 1079px;
 	min-height: 600px;

@@ -1,0 +1,31 @@
+/*global style control*/
+
+input:-webkit-autofill, textarea:-webkit-autofill { 
+    -webkit-box-shadow: 0 0 0 1000px white inset; 
+}
+
+input[type=text]:focus, input[type=password]:focus, textarea:focus {
+    -webkit-box-shadow: 0 0 0 1000px white inset; 
+}
+
+.layui-this {
+    border-bottom: 2px solid #5FB878;
+}
+
+.none {
+    display: none;  
+}
+
+.hidden {
+    opacity: 0; 
+}
+
+pre {
+    padding: 10px 15px;
+    margin: 10px 0;
+    font-size: 12px;
+    border-left: 6px solid #009688;
+    background-color: #f8f8f8;
+    font-family: Courier New;
+    overflow: auto; 
+}
